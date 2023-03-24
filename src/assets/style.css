@@ -1,0 +1,69 @@
+.background-292D31 {
+    background-color: #292D31 !important;
+}
+
+.background-171A1C {
+    background-color: #171A1C !important;
+}
+
+.background-1E2225 {
+    background-color: #1E2225 !important;
+}
+
+.color-5C5E5C {
+    color: #5C5E5C !important;
+}
+
+.main-px {
+    padding-left: 50px;
+    padding-right: 50px;
+}
+
+.ubuntu {
+    font-family: Ubuntu !important;
+    font-weight: 500 !important;
+}
+
+a:hover {
+    color: inherit;
+    text-decoration: none;
+}
+
+.welcome {
+    margin-top: 100px;
+}
+
+.fs-48 {
+    font-size: 48px;
+}
+
+.fs-24 {
+    font-size: 24px;
+}
+
+.text-align-justify {
+    text-align: justify;
+}
+
+@media(min-width: 992px) {
+    .welcome {
+        margin-top: 175px;
+    }
+}
+
+@media(max-width: 768px) {
+    .welcome {
+        margin-top: calc(75px + 25 * ((100vw - 320px) / (768 - 320)));
+    }
+
+    .main-px {
+        padding-left: 20px;
+        padding-right: 20px;
+    }
+    .fs-48 {
+        font-size: calc(40px + 8 * ((100vw - 320px) / (768 - 320)));
+    }
+    .fs-24 {
+        font-size: calc(17px + 7 * ((100vw - 320px) / (768 - 320)));
+    }
+}
