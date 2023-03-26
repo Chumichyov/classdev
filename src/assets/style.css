@@ -1,17 +1,21 @@
-.background-292D31 {
+.background-dark-3 {
     background-color: #292D31 !important;
 }
 
-.background-171A1C {
+.background-dark-1 {
     background-color: #171A1C !important;
 }
 
-.background-1E2225 {
+.background-dark-2 {
     background-color: #1E2225 !important;
 }
 
-.color-5C5E5C {
-    color: #5C5E5C !important;
+.border-gray-1 {
+    border-color: #61615D;
+}
+
+.color-gray-1 {
+    color: #61615D !important;
 }
 
 .main-px {
@@ -19,9 +23,9 @@
     padding-right: 50px;
 }
 
-.ubuntu {
-    font-family: Ubuntu !important;
-    font-weight: 500 !important;
+.noto-sans {
+    font-family: Noto-Sans !important;
+    font-weight: 500;
 }
 
 a:hover {

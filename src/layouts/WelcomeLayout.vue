@@ -1,6 +1,6 @@
 <template>
   <header
-    class="background-292D31 text-light main-px d-flex flex-wrap align-items-center justify-content-center justify-content-between"
+    class="background-dark-3 text-light main-px d-flex flex-wrap align-items-center justify-content-center justify-content-between"
     style="min-height: 60px"
   >
     <a

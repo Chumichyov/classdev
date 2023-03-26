@@ -8,6 +8,7 @@
 
 <script>
 import WelcomeLayout from "@/layouts/WelcomeLayout.vue";
+import EmptyLayout from "@/layouts/EmptyLayout.vue";
 
 export default {
   computed: {
@@ -18,6 +19,7 @@ export default {
 
   components: {
     WelcomeLayout,
+    EmptyLayout,
   },
 };
 </script>
