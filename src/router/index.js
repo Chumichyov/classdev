@@ -19,6 +19,12 @@ const routes = [
     meta: { layout: "welcome" },
     component: () => import("@/views/WelcomeView.vue"),
   },
+  {
+    path: "/main",
+    name: "main",
+    meta: { layout: "default", auth: true },
+    component: () => import("@/views/MainView.vue"),
+  },
 ];
 
 const router = createRouter({

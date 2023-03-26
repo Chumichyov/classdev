@@ -16,14 +16,19 @@ export default {
       email: "",
       password: "",
     });
+
+    this.setError({
+      message: "",
+      code: "",
+    });
   },
 
   computed: {
-    ...mapGetters(["auth"]),
+    ...mapGetters(["auth", "error"]),
   },
 
   methods: {
-    ...mapMutations(["setAuth"]),
+    ...mapMutations(["setAuth", "setError"]),
 
     signIn() {
       this.v$.$validate();
@@ -32,23 +37,6 @@ export default {
         this.$store.dispatch("signIn", this.auth);
       }
     },
-    // async signIn() {
-    //   this.v$.$validate();
-    //   if (!this.v$.$error) {
-    //     try {
-    //       const data = (
-    //         await this.$api.auth.signIn({
-    //           email: this.email,
-    //           password: this.password,
-    //         })
-    //       ).data;
-    //       console.log(data);
-    //       localStorage.setItem("authUser", JSON.stringify(data.user));
-    //     } catch (error) {
-    //       console.log(error.response.data);
-    //     }
-    //   }
-    // },
   },
 
   validations() {
@@ -80,14 +68,15 @@ export default {
     <div
       class="d-flex flex-column h-100 align-items-center justify-content-center"
     >
-      <div class="text-center text-light mb-4 fs-4">
+      <div class="text-center text-light mb-2 fs-4">
         Войдите в
         <router-link to="/">
           <a class="text-primary">Classdev</a>
         </router-link>
       </div>
+      <div class="text-danger">{{ error.message }}</div>
       <form
-        class="border text-light border-gray-1 mb-4 rounded p-3"
+        class="border text-light border-gray-1 mb-4 rounded p-3 mt-3"
         style="max-width: 340px; width: 100%"
         @submit.prevent="signIn"
       >
