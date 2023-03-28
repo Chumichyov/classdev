@@ -10,4 +10,7 @@ export default {
 
 <template>
   <default-header />
+  <div class="main-px">
+    <router-view></router-view>
+  </div>
 </template>

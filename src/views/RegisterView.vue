@@ -16,17 +16,16 @@ export default {
 
   data: () => ({
     v$: useVuelidate(),
-  }),
-
-  mounted() {
-    this.setRegister({
+    auth: {
       email: "",
       name: "",
       surname: "",
       password: "",
       password_confirmation: "",
-    });
+    },
+  }),
 
+  mounted() {
     this.setError({
       message: "",
       code: "",
@@ -34,24 +33,24 @@ export default {
   },
 
   computed: {
-    ...mapGetters(["register", "error"]),
+    ...mapGetters(["auth", "error"]),
   },
 
   methods: {
-    ...mapMutations(["setRegister", "setError"]),
+    ...mapMutations(["setAuth", "setError"]),
 
     signUp() {
       this.v$.$validate();
 
       if (!this.v$.$error) {
-        this.$store.dispatch("signUp", this.register);
+        this.$store.dispatch("signUp", this.auth);
       }
     },
   },
 
   validations() {
     return {
-      register: {
+      auth: {
         email: {
           required: helpers.withMessage("Поле не должно быть пустым", required),
           email: helpers.withMessage("Введите почту", email),
@@ -92,7 +91,7 @@ export default {
         password_confirmation: {
           sameAs: helpers.withMessage(
             "Пароль не совпадает",
-            sameAs(this.register.password)
+            sameAs(this.auth.password)
           ),
         },
       },
@@ -127,8 +126,8 @@ export default {
             :label="'Адрес электронной почты'"
             type="text"
             name="email"
-            v-model="register.email"
-            :error="v$.register.email.$errors"
+            v-model="auth.email"
+            :error="v$.auth.email.$errors"
           />
         </div>
         <div class="mb-2">
@@ -136,8 +135,8 @@ export default {
             :label="'Имя'"
             type="text"
             name="name"
-            v-model="register.name"
-            :error="v$.register.name.$errors"
+            v-model="auth.name"
+            :error="v$.auth.name.$errors"
           />
         </div>
         <div class="mb-2">
@@ -145,8 +144,8 @@ export default {
             :label="'Фамилия'"
             type="text"
             name="surname"
-            v-model="register.surname"
-            :error="v$.register.surname.$errors"
+            v-model="auth.surname"
+            :error="v$.auth.surname.$errors"
           />
         </div>
         <div class="mb-2">
@@ -154,8 +153,8 @@ export default {
             :label="'Пароль'"
             type="password"
             name="password"
-            v-model="register.password"
-            :error="v$.register.password.$errors"
+            v-model="auth.password"
+            :error="v$.auth.password.$errors"
           />
         </div>
         <div class="mb-3">
@@ -163,8 +162,8 @@ export default {
             :label="'Повтор пароля'"
             type="password"
             name="password_confirmation"
-            v-model="register.password_confirmation"
-            :error="v$.register.password_confirmation.$errors"
+            v-model="auth.password_confirmation"
+            :error="v$.auth.password_confirmation.$errors"
           />
         </div>
         <div class="">

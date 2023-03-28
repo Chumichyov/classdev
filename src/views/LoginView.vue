@@ -9,14 +9,13 @@ export default {
 
   data: () => ({
     v$: useVuelidate(),
+    auth: {
+      email: "",
+      password: "",
+    },
   }),
 
   mounted() {
-    this.setAuth({
-      email: "",
-      password: "",
-    });
-
     this.setError({
       message: "",
       code: "",
@@ -24,7 +23,7 @@ export default {
   },
 
   computed: {
-    ...mapGetters(["auth", "error"]),
+    ...mapGetters(["error", "courses"]),
   },
 
   methods: {
