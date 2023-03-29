@@ -15,7 +15,7 @@ export default {
   >
     <div class="">
       <div class="fw-900 text-light text-center" style="font-size: 60px">
-        {{ error.code }}
+        {{ error.status }}
       </div>
       <div class="fs-5 fw-900 text-light text-center">
         {{ error.message }}

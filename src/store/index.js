@@ -10,7 +10,7 @@ export default createStore({
     courses: [],
     error: {
       message: "Страница не найдена",
-      code: "404",
+      status: "404",
     },
   },
 
@@ -35,16 +35,18 @@ export default createStore({
           },
         })
         .then((res) => {
+          console.log(res);
           ctx.commit("setCourses", res.data.data);
         })
         .catch((err) => {
+          console.log(err);
           ctx.commit("setError", {
             message: err.response.data.message,
-            code: err.response.status,
+            status: err.response.status,
           });
 
-          if (err.response.data.status == 401) {
-            this.logout();
+          if (err.response.status == 401) {
+            ctx.dispatch("logout");
           }
 
           router.push("/error");
@@ -93,9 +95,9 @@ export default createStore({
     async logout(ctx) {
       window.localStorage.removeItem("token");
 
-      ctx.commit("setCourses", []);
-
       router.push("/login");
+
+      ctx.commit("setCourses", []);
     },
   },
 
