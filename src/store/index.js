@@ -8,19 +8,28 @@ import router from "../router";
 export default createStore({
   state: {
     courses: [],
+
     error: {
       message: "Страница не найдена",
       status: "404",
     },
+
+    notifications: [],
   },
 
   getters: {
     auth: (state) => {
       return state.auth;
     },
+
+    notifications: (state) => {
+      return state.notifications;
+    },
+
     courses: (state) => {
       return state.courses;
     },
+
     error: (state) => {
       return state.error;
     },
@@ -29,17 +38,31 @@ export default createStore({
   actions: {
     async allCourses(ctx) {
       await api.course
-        .allCourses({
-          headers: {
-            authorization: `Bearer ${window.localStorage.getItem("token")}`,
-          },
-        })
+        .allCourses()
         .then((res) => {
-          console.log(res);
           ctx.commit("setCourses", res.data.data);
         })
         .catch((err) => {
-          console.log(err);
+          ctx.commit("setError", {
+            message: err.response.data.message,
+            status: err.response.status,
+          });
+
+          if (err.response.status == 401) {
+            ctx.dispatch("logout");
+          }
+
+          router.push("/error");
+        });
+    },
+
+    async notifications(ctx) {
+      await api.notification
+        .notifications()
+        .then((res) => {
+          ctx.commit("setNotifications", res.data.data);
+        })
+        .catch((err) => {
           ctx.commit("setError", {
             message: err.response.data.message,
             status: err.response.status,
@@ -105,11 +128,17 @@ export default createStore({
     setAuth(state, auth) {
       state.auth = auth;
     },
+
     setError(state, error) {
       state.error = error;
     },
+
     setCourses(state, courses) {
       state.courses = courses;
+    },
+
+    setNotifications(state, notifications) {
+      state.notifications = notifications;
     },
   },
 

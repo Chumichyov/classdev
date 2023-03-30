@@ -18,7 +18,7 @@
 }
 
 .border-gray-1 {
-    border-color: #61615D;
+    border-color: #61615D !important;
 }
 
 .color-gray-1 {
@@ -26,15 +26,15 @@
 }
 
 .main-px {
-    padding-left: 50px;
-    padding-right: 50px;
+    padding-left: 36px;
+    padding-right: 36px;
 }
 
 .main-p-start {
-    padding-left: 50px;
+    padding-left: 36px;
 }
 .main-p-end {
-    padding-right: 50px;
+    padding-right: 36px;
 }
 
 .noto-sans {
@@ -59,6 +59,14 @@ a:hover {
     font-size: 24px;
 }
 
+.ps-is > div:not(:first-child) {
+    margin-left: 12px;
+}
+
+.pb-30 {
+    padding-bottom: 30px;
+}
+
 .fs-14 {
     font-size: 14px;
 }
@@ -73,21 +81,24 @@ a:hover {
     }
 }
 
-@media(max-width: 768px) {
-    .welcome {
-        margin-top: calc(75px + 25 * ((100vw - 320px) / (768 - 320)));
-    }
-
+@media(max-width: 992px) {
     .main-px {
-        padding-left: 20px;
-        padding-right: 20px;
+        padding-left: 24px;
+        padding-right: 24px;
     }
 
     .main-p-start {
-        padding-left: 20px;
+        padding-left: 24px;
     }
+    
     .main-p-end {
-        padding-right: 20px;
+        padding-right: 24px;
+    }
+}
+
+@media(max-width: 768px) {
+    .welcome {
+        margin-top: calc(75px + 25 * ((100vw - 320px) / (768 - 320)));
     }
 
     .fs-48 {
