@@ -1,16 +1,9 @@
 <template>
-  <suspense>
-    <template #default>
-      <div class="h-100">
-        <component :is="layout">
-          <router-view></router-view>
-        </component>
-      </div>
-    </template>
-    <template #fallback>
-      <p class="text-primary">Loading</p>
-    </template>
-  </suspense>
+  <div class="min-vh-100">
+    <component :is="layout">
+      <router-view></router-view>
+    </component>
+  </div>
 </template>
 
 <script>

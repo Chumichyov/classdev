@@ -1,19 +1,44 @@
+<script>
+export default {
+  name: "DefaultHeader",
+
+  methods: {
+    notifications(type) {
+      this.$store.dispatch("notifications", {
+        page: 1,
+        type: type,
+      });
+    },
+  },
+};
+</script>
+
 <template>
   <header
-    class="background-dark-3 text-light main-px d-flex flex-wrap align-items-center justify-content-center justify-content-between"
+    class="background-dark-3 text-light main-px d-flex flex-wrap align-items-center justify-content-between"
     style="min-height: 60px"
   >
-    <a
-      href="#"
+    <router-link
+      to="/"
       class="d-flex align-items-center text-light fs-3 py-2 text-decoration-none"
-      >Classdev</a
+      >Classdev</router-link
     >
     <div class="d-flex align-items-center justify-content-center">
       <div class="me-3 d-flex align-items-center justify-content-center">
-        <img src="@/assets/Bell.png" alt="" width="16px" height="18px" />
+        <router-link
+          to="/notifications?q=Inbox"
+          class="d-flex"
+          @click.prevent="notifications('Inbox')"
+        >
+          <img
+            src="@/assets/Bell.png"
+            alt=""
+            style="width: 16px; height: 18px"
+          />
+        </router-link>
       </div>
       <div class="me-3 d-flex align-items-center justify-content-center">
-        <img src="@/assets/Plus.png" alt="" width="16px" height="16px" />
+        <img src="@/assets/Plus.png" alt="" style="width: 16px; height: 16px" />
       </div>
       <div class="">
         <div

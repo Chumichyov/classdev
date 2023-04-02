@@ -1,25 +1,26 @@
 <script>
 import { mapGetters } from "vuex";
+import PaginationComponent from "@/components/pagination/PaginationComponent.vue";
 import SidebarComponent from "@/components/sidebar/SidebarComponent.vue";
 
 export default {
-  name: "MainView",
+  name: "NotificationsView",
 
   mounted() {
-    this.$store.dispatch("notifications");
+    this.$store.dispatch("notifications", {
+      page: 1,
+      type: this.$route.query.q,
+    });
   },
 
   computed: {
     ...mapGetters(["notifications"]),
   },
 
-  methods: {
-    logout() {
-      this.$store.dispatch("logout");
-    },
-  },
+  methods: {},
 
   components: {
+    PaginationComponent,
     SidebarComponent,
   },
 };
@@ -30,33 +31,18 @@ export default {
     class="d-flex align-items-start justify-content-start min-vh-100 position-relative"
   >
     <sidebar-component></sidebar-component>
-    <div class="main main-px pt-4 w-100 overflow-hidden ms-sidebar">
-      <div class="d-flex align-items-center justify-content-between w-100">
-        <div class="text-light">Новое в участиях</div>
-        <router-link
-          to="/notifications?q=Task"
-          class="btn btn-primary text-light px-2 py-1"
-        >
-          Просмотреть все
-        </router-link>
-      </div>
-      <div
-        class="text-light fs-1 w-100 text-center pt-4 pb-5 border-bottom border-gray-1"
-        v-if="notifications == ''"
-      >
-        Ничего нет
-      </div>
-      <div
-        class="ps-is pt-3 d-flex align-items-start justify-content-start"
-        v-if="notifications != ''"
-      >
-        <splide :options="this.$splider.options(300)" class="w-100 pb-40">
-          <splide-slide
-            v-for="notification in notifications"
-            :key="notification.id"
+    <div class="d-flex w-100 justify-content-center ms-sidebar">
+      <div class="main-px mw-768">
+        <div class="" style="min-height: 768px">
+          <div
+            class="pt-5 d-flex flex-wrap align-items-center justify-content-center justify-content-md-between"
           >
-            <router-link to="/" class="text-decoration-none">
-              <div class="background-dark-2 rounded-3 p-3">
+            <div
+              class="background-dark-2 rounded-3 p-3 w-100 mb-3 mw-500-768"
+              v-for="notification in notifications"
+              :key="notification.id"
+            >
+              <div class="">
                 <div class="points text-light">
                   {{ notification.course.title }}
                 </div>
@@ -83,11 +69,11 @@ export default {
                   </div>
                 </div>
               </div>
-            </router-link>
-          </splide-slide>
-        </splide>
+            </div>
+          </div>
+        </div>
+        <pagination-component :action="'notifications'"></pagination-component>
       </div>
-      <!-- <button class="btn btn-primary" @click.prevent="logout">Выйти</button> -->
     </div>
   </div>
 </template>

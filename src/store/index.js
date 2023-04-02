@@ -15,6 +15,8 @@ export default createStore({
     },
 
     notifications: [],
+
+    pagination: [],
   },
 
   getters: {
@@ -24,6 +26,10 @@ export default createStore({
 
     notifications: (state) => {
       return state.notifications;
+    },
+
+    pagination: (state) => {
+      return state.pagination;
     },
 
     courses: (state) => {
@@ -36,9 +42,9 @@ export default createStore({
   },
 
   actions: {
-    async allCourses(ctx) {
+    async indexCourses(ctx) {
       await api.course
-        .allCourses()
+        .indexCourses()
         .then((res) => {
           ctx.commit("setCourses", res.data.data);
         })
@@ -56,13 +62,39 @@ export default createStore({
         });
     },
 
-    async notifications(ctx) {
+    async storeCourses(ctx, course) {
+      await api.course
+        .storeCourses(course)
+        .then(() => {
+          router.push("/main");
+        })
+        .catch((err) => {
+          console.log(err);
+          ctx.commit("setError", {
+            message: err.response.data.message,
+            status: err.response.status,
+          });
+
+          if (err.response.status == 401) {
+            ctx.dispatch("logout");
+          }
+
+          router.push("/error");
+        });
+    },
+
+    async notifications(ctx, data = 1) {
       await api.notification
-        .notifications()
+        .notifications({
+          page: data.page ? data.page : 1,
+          type: data.type ? data.type : "Task",
+        })
         .then((res) => {
+          ctx.commit("setPagination", res.data.meta);
           ctx.commit("setNotifications", res.data.data);
         })
         .catch((err) => {
+          console.log(err);
           ctx.commit("setError", {
             message: err.response.data.message,
             status: err.response.status,
@@ -139,6 +171,10 @@ export default createStore({
 
     setNotifications(state, notifications) {
       state.notifications = notifications;
+    },
+
+    setPagination(state, pagination) {
+      state.pagination = pagination;
     },
   },
 

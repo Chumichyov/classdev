@@ -1,55 +1,30 @@
 <script>
-import InputComponent from "../InputComponent.vue";
+import DefaultType from "./type/DefaultType.vue";
+import NotificationType from "./type/NotificationType.vue";
 
 export default {
   name: "SidebarComponent",
 
-  data: () => ({
-    query: "",
-  }),
-
-  props: {
-    courses: {
-      type: Array,
-      required: true,
+  computed: {
+    sidebar() {
+      return this.$route.meta.sidebar + "-type";
     },
   },
 
   components: {
-    InputComponent,
+    DefaultType,
+    NotificationType,
   },
 };
 </script>
 
 <template>
   <div
-    class="sidebar background-dark-2 main-px pt-4 w-100 h-100"
+    class="sidebar background-dark-2 main-px pt-4 pb-4 w-100 position-absolute top-0 start-0 bottom-0"
     style="max-width: 330px"
   >
-    <div class="mb-4">
-      <div class="d-flex align-items-center justify-content-between text-light">
-        <div class="">Курсы</div>
-        <button class="btn btn-primary px-2 py-1">Создать</button>
-      </div>
-      <form action="" class="mt-3">
-        <input-component type="text" name="search" v-model="query" />
-      </form>
-    </div>
-    <div class="" v-for="(course, index) in courses" :key="course.id">
-      <div
-        class="d-flex align-items-center justify-content-start"
-        :class="index > 0 ? 'mt-2' : ''"
-      >
-        <img
-          class="rounded-circle position-relative w-100"
-          style="max-width: 21px; max-height: 21px"
-          :src="this.$url + course.leader.information.photo_path"
-          alt=""
-        />
-        <span class="text-light fs-14 points ms-2">
-          {{ course.title }}
-        </span>
-      </div>
-    </div>
+    <component :is="sidebar">
+      <router-view></router-view>
+    </component>
   </div>
 </template>

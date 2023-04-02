@@ -5,6 +5,43 @@
     text-overflow: ellipsis;
 }
 
+.mw-900 {
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    align-items: center;
+}
+
+.mw-900 > div {
+    max-width: 900px;
+    width: 100%;
+}
+
+.pagination.active {
+    background-color: #fff;
+    color: #171A1C;
+}
+
+.rounded-30 {
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.mw-768 {
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    align-items: center;
+}
+
+.mw-768 > div {
+    max-width: 768px;
+    width: 100%;
+}
+
 .background-dark-3 {
     background-color: #292D31;
 }
@@ -19,6 +56,10 @@
 
 .border-gray-1 {
     border-color: #61615D !important;
+}
+
+.border-gray-2 {
+    border-color: #393d41 !important;
 }
 
 .color-gray-1 {
@@ -63,16 +104,33 @@ a:hover {
     margin-left: 12px;
 }
 
-.pb-30 {
-    padding-bottom: 30px;
+.pb-40 {
+    padding-bottom: 40px;
 }
 
 .fs-14 {
     font-size: 14px;
 }
 
+.fs-12 {
+    font-size: 12px;
+}
+
 .text-align-justify {
     text-align: justify;
+}
+
+.ms-sidebar {
+    margin-left: 330px;
+}
+
+.my.button.active {
+    border: none !important;
+    background-color: #0d6efd;
+}
+
+.my.button:not(.active):hover {
+    background-color: #292D31;
 }
 
 @media(min-width: 992px) {
@@ -106,5 +164,15 @@ a:hover {
     }
     .fs-24 {
         font-size: calc(17px + 7 * ((100vw - 320px) / (768 - 320)));
+    }
+
+    .mw-500-768 {
+        max-width: 500px;
+    }
+}
+
+@media(min-width: 1120px) {
+    .mw-500-768 {
+        max-width: 352px;
     }
 }

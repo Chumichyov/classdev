@@ -13,6 +13,11 @@ export default {
       required: false,
     },
 
+    remark: {
+      type: String,
+      required: false,
+    },
+
     type: {
       type: String,
       default: "text",
@@ -35,9 +40,12 @@ export default {
 
 <template>
   <div class="">
-    <label :for="type" class="form-label fw-normal" v-if="label">{{
-      label
-    }}</label>
+    <label :for="type" class="form-label fw-normal text-light" v-if="label"
+      >{{ label }}
+      <span class="color-gray-1 fs-12" v-if="remark"
+        >({{ remark }})</span
+      ></label
+    >
     <input
       class="form-control border-gray-1 bg-transparent text-light"
       style="height: 32px"
