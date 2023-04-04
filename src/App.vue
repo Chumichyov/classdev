@@ -1,5 +1,5 @@
 <template>
-  <div class="min-vh-100">
+  <div class="min-vh-100 main-grid">
     <component :is="layout">
       <router-view></router-view>
     </component>

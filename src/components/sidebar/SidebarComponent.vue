@@ -20,7 +20,7 @@ export default {
 
 <template>
   <div
-    class="sidebar background-dark-2 main-px pt-4 pb-4 w-100 position-absolute top-0 start-0 bottom-0"
+    class="sidebar background-dark-2 main-px pt-4 pb-4 w-100 h-100"
     style="max-width: 330px"
   >
     <component :is="sidebar">

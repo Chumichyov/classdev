@@ -129,6 +129,11 @@ a:hover {
     background-color: #0d6efd;
 }
 
+.main-grid {
+    display: grid;
+    grid-template-rows: 60px 1fr;
+}
+
 .my.button:not(.active):hover {
     background-color: #292D31;
 }

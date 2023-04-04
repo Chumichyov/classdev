@@ -27,10 +27,10 @@ export default {
 
 <template>
   <div
-    class="d-flex align-items-start justify-content-start min-vh-100 position-relative"
+    class="d-flex align-items-start justify-content-start min-vh-100 overflow-hidden"
   >
     <sidebar-component></sidebar-component>
-    <div class="main main-px pt-4 w-100 overflow-hidden ms-sidebar">
+    <div class="main-px pt-4 w-100 overflow-hidden">
       <div class="d-flex align-items-center justify-content-between w-100">
         <div class="text-light">Новое в участиях</div>
         <router-link
