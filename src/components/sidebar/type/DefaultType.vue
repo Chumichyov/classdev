@@ -47,7 +47,7 @@ export default {
           :src="this.$url + course.leader.information.photo_path"
           alt=""
         />
-        <span class="text-light fs-14 points ms-2">
+        <span class="text-light fs-14 points-1 ms-2">
           {{ course.title }}
         </span>
       </div>

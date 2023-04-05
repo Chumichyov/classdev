@@ -1,6 +1,7 @@
 <script>
 import { mapGetters } from "vuex";
 import SidebarComponent from "@/components/sidebar/SidebarComponent.vue";
+import NotificationBlockComponent from "@/components/notification/NotificationBlockComponent.vue";
 
 export default {
   name: "MainView",
@@ -21,6 +22,7 @@ export default {
 
   components: {
     SidebarComponent,
+    NotificationBlockComponent,
   },
 };
 </script>
@@ -41,10 +43,10 @@ export default {
         </router-link>
       </div>
       <div
-        class="text-light fs-1 w-100 text-center pt-4 pb-5 border-bottom border-gray-1"
+        class="text-light fs-2 w-100 text-center pt-4 pb-5 border-bottom border-gray-1 text-gray-1 text-center"
         v-if="notifications == ''"
       >
-        Ничего нет
+        Упс... Похоже здесь нет уведомлений
       </div>
       <div
         class="ps-is pt-3 d-flex align-items-start justify-content-start"
@@ -55,35 +57,9 @@ export default {
             v-for="notification in notifications"
             :key="notification.id"
           >
-            <router-link to="/" class="text-decoration-none">
-              <div class="background-dark-2 rounded-3 p-3">
-                <div class="points text-light">
-                  {{ notification.course.title }}
-                </div>
-                <div class="points text-light fs-14 mt-2">
-                  {{ notification.task.title }}
-                </div>
-                <div
-                  class="mt-3 w-100 d-flex align-items-center justify-content-between"
-                >
-                  <img
-                    class="rounded-circle position-relative w-100"
-                    style="max-width: 21px; max-height: 21px"
-                    :src="
-                      this.$url +
-                      notification.course.leader.information.photo_path
-                    "
-                    alt=""
-                  />
-                  <div
-                    class="text-primary fs-14"
-                    v-if="notification.created_at"
-                  >
-                    {{ this.$moment.getDate(notification.created_at) }}
-                  </div>
-                </div>
-              </div>
-            </router-link>
+            <notification-block-component
+              :notification="notification"
+            ></notification-block-component>
           </splide-slide>
         </splide>
       </div>

@@ -1,8 +1,9 @@
 <script>
-import { mapGetters } from "vuex";
+import { mapGetters, mapMutations } from "vuex";
 import PaginationComponent from "@/components/pagination/PaginationComponent.vue";
 import SidebarComponent from "@/components/sidebar/SidebarComponent.vue";
 import InputComponent from "@/components/InputComponent.vue";
+import NotificationBlockComponent from "@/components/notification/NotificationBlockComponent.vue";
 
 export default {
   name: "NotificationsView",
@@ -27,7 +28,9 @@ export default {
   },
 
   methods: {
-    ch() {
+    ...mapMutations(["setNotificationSearch"]),
+
+    newNotifications() {
       let route = "";
 
       if (this.search !== "") {
@@ -37,6 +40,13 @@ export default {
       }
 
       this.$router.push(route);
+
+      this.setNotificationSearch(this.search);
+
+      this.$store.dispatch("notifications", {
+        page: 1,
+        type: this.$route.query.q,
+      });
     },
   },
 
@@ -44,6 +54,7 @@ export default {
     PaginationComponent,
     SidebarComponent,
     InputComponent,
+    NotificationBlockComponent,
   },
 };
 </script>
@@ -54,14 +65,14 @@ export default {
   >
     <sidebar-component></sidebar-component>
     <div class="d-flex w-100 justify-content-center flex-column pt-4">
-      <div class="main-px mw-768 w-100">
+      <div v-if="notifications != ''" class="main-px mw-768 w-100">
         <div class="">
           <form action="" class="w-100">
             <input-component
               class="w-100"
               v-model="search"
               :name="'search'"
-              v-on:input="ch"
+              v-on:input="newNotifications"
             ></input-component>
           </form>
         </div>
@@ -70,41 +81,23 @@ export default {
             class="pt-4 d-flex flex-wrap align-items-center justify-content-center justify-content-md-between"
           >
             <div
-              class="background-dark-2 rounded-3 p-3 w-100 mb-3 mw-500-768"
+              class=""
               v-for="notification in notifications"
               :key="notification.id"
             >
-              <div class="">
-                <!-- <div class="points text-light">
-                  {{ notification.course.title }}
-                </div> -->
-                <div class="points text-light fs-14 mt-2">
-                  {{ notification.message }}
-                </div>
-                <div
-                  class="mt-3 w-100 d-flex align-items-center justify-content-between"
-                >
-                  <img
-                    class="rounded-circle position-relative w-100"
-                    style="max-width: 21px; max-height: 21px"
-                    :src="
-                      this.$url +
-                      notification.course.leader.information.photo_path
-                    "
-                    alt=""
-                  />
-                  <div
-                    class="text-primary fs-14"
-                    v-if="notification.created_at"
-                  >
-                    {{ this.$moment.getDate(notification.created_at) }}
-                  </div>
-                </div>
-              </div>
+              <notification-block-component
+                :notification="notification"
+              ></notification-block-component>
             </div>
           </div>
         </div>
         <pagination-component :action="'notifications'"></pagination-component>
+      </div>
+      <div
+        v-else
+        class="main-px mw-768 w-100 mt-5 fs-2 text-gray-1 text-center"
+      >
+        Упс... Похоже здесь нет уведомлений
       </div>
     </div>
   </div>

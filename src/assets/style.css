@@ -1,8 +1,15 @@
-.points {
-    width: auto;
-    white-space: nowrap;
+.points-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
     overflow: hidden;
-    text-overflow: ellipsis;
+}
+
+.points-1 {
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
 }
 
 .mw-900 {
@@ -40,6 +47,10 @@
 .mw-768 > div {
     max-width: 768px;
     width: 100%;
+}
+
+.text-gray-1 {
+    color: #393C3C !important;
 }
 
 .background-dark-3 {
@@ -170,9 +181,11 @@ a:hover {
     .fs-24 {
         font-size: calc(17px + 7 * ((100vw - 320px) / (768 - 320)));
     }
+}
 
+@media(max-width: 1120px) {
     .mw-500-768 {
-        max-width: 500px;
+        max-width: 717px;
     }
 }
 

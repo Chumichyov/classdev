@@ -27,7 +27,10 @@ export default {
         class="rounded-circle border w-100 h-100 d-flex align-items-center justify-content-center"
         v-if="pagination.current_page !== 1"
         @click.prevent="
-          this.$store.dispatch(action, { page: pagination.current_page - 1 })
+          this.$store.dispatch(action, {
+            page: pagination.current_page - 1,
+            type: this.$route.query.q,
+          })
         "
       >
         <img src="../../assets/angle-double-small-left.png" alt="" class="" />
@@ -45,7 +48,12 @@ export default {
         "
       >
         <div
-          @click.prevent="this.$store.dispatch(action, { page: link.label })"
+          @click.prevent="
+            this.$store.dispatch(action, {
+              page: link.label,
+              type: this.$route.query.q,
+            })
+          "
           :class="link.active ? 'active' : ''"
           class="pagination rounded-30 rounded-circle border ms-2 user-select-none"
         >
@@ -87,7 +95,10 @@ export default {
         class="rounded-circle border w-100 h-100 d-flex align-items-center justify-content-center"
         v-if="pagination.current_page !== pagination.last_page"
         @click.prevent="
-          this.$store.dispatch(action, { page: pagination.current_page + 1 })
+          this.$store.dispatch(action, {
+            page: pagination.current_page + 1,
+            type: this.$route.query.q,
+          })
         "
       >
         <img src="../../assets/angle-double-small-right.png" alt="" class="" />

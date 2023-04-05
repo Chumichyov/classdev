@@ -14,6 +14,8 @@ export default createStore({
       status: "404",
     },
 
+    notificationSearch: "",
+
     notifications: [],
 
     pagination: [],
@@ -22,6 +24,10 @@ export default createStore({
   getters: {
     auth: (state) => {
       return state.auth;
+    },
+
+    notificationSearch: (state) => {
+      return state.notificationSearch;
     },
 
     notifications: (state) => {
@@ -83,28 +89,35 @@ export default createStore({
         });
     },
 
-    async notifications(ctx, data = 1) {
+    async notifications(
+      ctx,
+      data = {
+        page: 1,
+        type: "Task",
+      }
+    ) {
       await api.notification
         .notifications({
-          page: data.page ? data.page : 1,
-          type: data.type ? data.type : "Task",
+          page: data.page,
+          type: data.type,
+          search: ctx.state.notificationSearch,
         })
         .then((res) => {
+          console.log(res);
           ctx.commit("setPagination", res.data.meta);
           ctx.commit("setNotifications", res.data.data);
         })
         .catch((err) => {
-          console.log(err);
           ctx.commit("setError", {
             message: err.response.data.message,
             status: err.response.status,
           });
 
+          router.push("/error");
+
           if (err.response.status == 401) {
             ctx.dispatch("logout");
           }
-
-          router.push("/error");
         });
     },
 
@@ -175,6 +188,10 @@ export default createStore({
 
     setPagination(state, pagination) {
       state.pagination = pagination;
+    },
+
+    setNotificationSearch(state, notificationSearch) {
+      state.notificationSearch = notificationSearch;
     },
   },
 
