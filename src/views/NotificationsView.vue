@@ -16,6 +16,7 @@ export default {
     this.$store.dispatch("notifications", {
       page: 1,
       type: this.$route.query.q,
+      all: this.$route.query.all,
     });
 
     this.$route.query.search
@@ -34,9 +35,9 @@ export default {
       let route = "";
 
       if (this.search !== "") {
-        route = `/notifications?q=${this.$route.query.q}&search=${this.search}`;
+        route = `/notifications?q=${this.$route.query.q}&search=${this.search}&all=${this.$route.query.all}`;
       } else {
-        route = `/notifications?q=${this.$route.query.q}`;
+        route = `/notifications?q=${this.$route.query.q}&all=${this.$route.query.all}`;
       }
 
       this.$router.push(route);
@@ -46,6 +47,7 @@ export default {
       this.$store.dispatch("notifications", {
         page: 1,
         type: this.$route.query.q,
+        all: this.$route.query.all,
       });
     },
   },
@@ -65,9 +67,44 @@ export default {
   >
     <sidebar-component></sidebar-component>
     <div class="d-flex w-100 justify-content-center flex-column pt-4">
-      <div v-if="notifications != ''" class="main-px mw-768 w-100">
+      <div class="main-px mw-768 w-100">
         <div class="">
-          <form action="" class="w-100">
+          <form action="" class="w-100 d-flex align-items-center">
+            <div class="" @click.prevent="newNotifications">
+              <router-link
+                :to="
+                  typeof this.$route.query.search != 'undefined'
+                    ? '/notifications?q=' +
+                      this.$route.query.q +
+                      '&search=' +
+                      this.$route.query.search +
+                      '&all=true'
+                    : '/notifications?q=' + this.$route.query.q + '&all=true'
+                "
+                class="my button text-light border-0 me-2 background-dark-1 px-2 py-1 rounded text-decoration-none"
+                :class="this.$route.query.all == 'true' ? 'active' : ''"
+              >
+                Все
+              </router-link>
+            </div>
+            <div class="" @click.prevent="newNotifications">
+              <router-link
+                :to="
+                  typeof this.$route.query.search != 'undefined'
+                    ? '/notifications?q=' +
+                      this.$route.query.q +
+                      '&search=' +
+                      this.$route.query.search +
+                      '&all=false'
+                    : '/notifications?q=' + this.$route.query.q + '&all=false'
+                "
+                class="my button text-light border-0 me-2 background-dark-1 px-2 py-1 rounded text-decoration-none"
+                :class="this.$route.query.all == 'false' ? 'active' : ''"
+              >
+                Непрочитанные
+              </router-link>
+            </div>
+
             <input-component
               class="w-100"
               v-model="search"
@@ -76,25 +113,31 @@ export default {
             ></input-component>
           </form>
         </div>
-        <div class="" style="min-height: 768px">
-          <div
-            class="pt-4 d-flex flex-wrap align-items-center justify-content-center justify-content-md-between"
-          >
+        <div class="" v-if="notifications != ''">
+          <div class="" style="min-height: 989px">
             <div
-              class=""
-              v-for="notification in notifications"
-              :key="notification.id"
+              class="pt-4 d-flex flex-wrap align-items-center justify-content-center justify-content-md-between"
             >
-              <notification-block-component
-                :notification="notification"
-              ></notification-block-component>
+              <div
+                v-for="notification in notifications"
+                :key="notification.id"
+                class="w-100 mw-500-768"
+              >
+                <notification-block-component
+                  :notification="notification"
+                  :dotted="3"
+                  :modal="true"
+                ></notification-block-component>
+              </div>
             </div>
           </div>
+          <pagination-component
+            :action="'notifications'"
+          ></pagination-component>
         </div>
-        <pagination-component :action="'notifications'"></pagination-component>
       </div>
       <div
-        v-else
+        v-if="notifications == ''"
         class="main-px mw-768 w-100 mt-5 fs-2 text-gray-1 text-center"
       >
         Упс... Похоже здесь нет уведомлений

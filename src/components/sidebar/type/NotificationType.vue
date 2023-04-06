@@ -9,6 +9,7 @@ export default {
       this.$store.dispatch("notifications", {
         page: 1,
         type: type,
+        all: this.$route.query.all,
       });
     },
   },
@@ -19,7 +20,14 @@ export default {
   <div class="h-100">
     <div class="w-100">
       <router-link
-        to="/notifications?q=Inbox"
+        :to="
+          typeof this.$route.query.search != 'undefined'
+            ? '/notifications?q=Inbox&search=' +
+              this.$route.query.search +
+              '&all=' +
+              this.$route.query.all
+            : '/notifications?q=Inbox' + '&all=' + this.$route.query.all
+        "
         @click.prevent="notifications('Inbox')"
         class="my button text-light text-decoration-none border-none w-100 text-start d-flex align-items-center px-3 py-2 rounded"
         :class="this.$route.query.q == 'Inbox' ? 'active' : ''"
@@ -40,7 +48,14 @@ export default {
 
       <router-link
         @click.prevent="notifications('Course')"
-        to="/notifications?q=Course"
+        :to="
+          typeof this.$route.query.search != 'undefined'
+            ? '/notifications?q=Course&search=' +
+              this.$route.query.search +
+              '&all=' +
+              this.$route.query.all
+            : '/notifications?q=Course' + '&all=' + this.$route.query.all
+        "
         class="my button text-light text-decoration-none border-none w-100 text-start d-flex align-items-center mt-2 px-3 py-2 rounded"
         :class="this.$route.query.q == 'Course' ? 'active' : ''"
       >
@@ -55,7 +70,14 @@ export default {
       <div class="ms-3 ps-2 border-start">
         <router-link
           @click.prevent="notifications('Task')"
-          to="/notifications?q=Task"
+          :to="
+            typeof this.$route.query.search != 'undefined'
+              ? '/notifications?q=Task&search=' +
+                this.$route.query.search +
+                '&all=' +
+                this.$route.query.all
+              : '/notifications?q=Task' + '&all=' + this.$route.query.all
+          "
           class="my button text-light text-decoration-none border-none w-100 text-start d-flex align-items-center mt-2 px-3 py-2 rounded"
           :class="this.$route.query.q == 'Task' ? 'active' : ''"
         >
@@ -69,7 +91,14 @@ export default {
 
         <router-link
           @click.prevent="notifications('Decision')"
-          to="/notifications?q=Decision"
+          :to="
+            typeof this.$route.query.search != 'undefined'
+              ? '/notifications?q=Decision&search=' +
+                this.$route.query.search +
+                '&all=' +
+                this.$route.query.all
+              : '/notifications?q=Decision' + '&all=' + this.$route.query.all
+          "
           class="my button text-light text-decoration-none border-none w-100 text-start d-flex align-items-center mt-2 px-3 py-2 rounded"
           :class="this.$route.query.q == 'Decision' ? 'active' : ''"
         >
@@ -84,7 +113,14 @@ export default {
 
       <router-link
         @click.prevent="notifications('Messenger')"
-        to="/notifications?q=Messenger"
+        :to="
+          typeof this.$route.query.search != 'undefined'
+            ? '/notifications?q=Messenger&search=' +
+              this.$route.query.search +
+              '&all=' +
+              this.$route.query.all
+            : '/notifications?q=Messenger' + '&all=' + this.$route.query.all
+        "
         class="my button text-light text-decoration-none border-none w-100 text-start d-flex align-items-center mt-2 px-3 py-2 rounded"
         :class="this.$route.query.q == 'Messenger' ? 'active' : ''"
       >

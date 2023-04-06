@@ -2,6 +2,7 @@
 import { mapGetters } from "vuex";
 import SidebarComponent from "@/components/sidebar/SidebarComponent.vue";
 import NotificationBlockComponent from "@/components/notification/NotificationBlockComponent.vue";
+import ModalComponent from "@/components/modal/ModalComponent.vue";
 
 export default {
   name: "MainView",
@@ -23,6 +24,7 @@ export default {
   components: {
     SidebarComponent,
     NotificationBlockComponent,
+    ModalComponent,
   },
 };
 </script>
@@ -36,7 +38,7 @@ export default {
       <div class="d-flex align-items-center justify-content-between w-100">
         <div class="text-light">Новое в участиях</div>
         <router-link
-          to="/notifications?q=Task"
+          to="/notifications?q=Task&all=true"
           class="btn btn-primary text-light px-2 py-1"
         >
           Просмотреть все
@@ -49,21 +51,33 @@ export default {
         Упс... Похоже здесь нет уведомлений
       </div>
       <div
-        class="ps-is pt-3 d-flex align-items-start justify-content-start"
+        class="pt-3 d-flex align-items-start justify-content-start"
         v-if="notifications != ''"
       >
-        <splide :options="this.$splider.options(300)" class="w-100 pb-40">
+        <div
+          class=""
+          v-for="notification in notifications"
+          :key="notification.id"
+        >
+          <modal-component :notification="notification"></modal-component>
+        </div>
+        <splide
+          :options="this.$splider.options(300)"
+          class="w-100 pb-40 position-relative"
+        >
           <splide-slide
+            class="position-relative"
             v-for="notification in notifications"
             :key="notification.id"
           >
             <notification-block-component
               :notification="notification"
+              :dotted="2"
             ></notification-block-component>
           </splide-slide>
         </splide>
       </div>
-      <!-- <button class="btn btn-primary" @click.prevent="logout">Выйти</button> -->
+      <button class="btn btn-primary" @click.prevent="logout">Выйти</button>
     </div>
   </div>
 </template>

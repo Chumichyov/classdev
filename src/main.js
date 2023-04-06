@@ -8,6 +8,7 @@ import ApiPlugin from "./plugins/api";
 import UrlPlugin from "./plugins/url";
 import MomentPlugin from "./plugins/moment";
 import "./registerServiceWorker";
+import "bootstrap/dist/js/bootstrap";
 
 createApp(App)
   .use(store)

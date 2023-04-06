@@ -30,6 +30,7 @@ export default {
           this.$store.dispatch(action, {
             page: pagination.current_page - 1,
             type: this.$route.query.q,
+            all: this.$route.query.all,
           })
         "
       >
@@ -52,6 +53,7 @@ export default {
             this.$store.dispatch(action, {
               page: link.label,
               type: this.$route.query.q,
+              all: this.$route.query.all,
             })
           "
           :class="link.active ? 'active' : ''"
@@ -98,6 +100,7 @@ export default {
           this.$store.dispatch(action, {
             page: pagination.current_page + 1,
             type: this.$route.query.q,
+            all: this.$route.query.all,
           })
         "
       >

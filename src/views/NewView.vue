@@ -1,9 +1,13 @@
 <script>
+import { useVuelidate } from "@vuelidate/core";
+import { helpers, required, minLength, maxLength } from "@vuelidate/validators";
 import InputComponent from "@/components/InputComponent.vue";
 
 export default {
   name: "NewView",
+
   data: () => ({
+    v$: useVuelidate(),
     course: {
       title: "",
       group: "",
@@ -13,8 +17,53 @@ export default {
 
   methods: {
     storeCourses() {
-      this.$store.dispatch("storeCourses", this.course);
+      this.v$.$validate();
+
+      if (!this.v$.$error) {
+        this.$store.dispatch("storeCourses", this.course);
+      }
     },
+  },
+
+  validations() {
+    return {
+      course: {
+        title: {
+          required: helpers.withMessage("Поле не должно быть пустым", required),
+          maxLength: helpers.withMessage(
+            "Максимальная длина: 24 символа",
+            maxLength(24)
+          ),
+          minLength: helpers.withMessage(
+            "Минимальная длина: 6 символа",
+            minLength(6)
+          ),
+        },
+
+        group: {
+          required: helpers.withMessage("Поле не должно быть пустым", required),
+          maxLength: helpers.withMessage(
+            "Максимальная длина: 16 символов",
+            maxLength(16)
+          ),
+          minLength: helpers.withMessage(
+            "Минимальная длина: 2 символа",
+            minLength(2)
+          ),
+        },
+
+        description: {
+          maxLength: helpers.withMessage(
+            "Максимальная длина: 256 символа",
+            maxLength(256)
+          ),
+          minLength: helpers.withMessage(
+            "Минимальная длина: 2 символов",
+            minLength(2)
+          ),
+        },
+      },
+    };
   },
 
   components: {
@@ -33,20 +82,21 @@ export default {
         <div class="">
           <div class="d-flex">
             <input-component
-              class=""
-              style="width: 272px"
+              class="w-100"
               :label="'Название курса'"
               v-model="course.title"
               type="text"
               name="name"
+              :error="v$.course.title.$errors"
             ></input-component>
             <input-component
-              class="ms-4"
-              style="width: 120px"
+              class="ms-4 w-100"
+              style="max-width: 240px"
               :label="'Группа'"
               v-model="course.group"
               type="text"
               name="name"
+              :error="v$.course.group.$errors"
             ></input-component>
           </div>
           <input-component
@@ -56,6 +106,7 @@ export default {
             :remark="'Необязательно'"
             type="text"
             name="name"
+            :error="v$.course.description.$errors"
           ></input-component>
         </div>
         <button type="submit" class="btn btn-primary mt-4">Создать</button>

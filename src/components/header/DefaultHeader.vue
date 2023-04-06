@@ -26,7 +26,7 @@ export default {
     <div class="d-flex align-items-center justify-content-center">
       <div class="me-3 d-flex align-items-center justify-content-center">
         <router-link
-          to="/notifications?q=Inbox"
+          to="/notifications?q=Inbox&all=true"
           class="d-flex"
           @click.prevent="notifications('Inbox')"
         >
@@ -38,7 +38,13 @@ export default {
         </router-link>
       </div>
       <div class="me-3 d-flex align-items-center justify-content-center">
-        <img src="@/assets/Plus.png" alt="" style="width: 16px; height: 16px" />
+        <router-link to="/new" class="d-flex">
+          <img
+            src="@/assets/Plus.png"
+            alt=""
+            style="width: 16px; height: 16px"
+          />
+        </router-link>
       </div>
       <div class="">
         <div
