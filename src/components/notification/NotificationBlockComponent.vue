@@ -32,12 +32,14 @@ export default {
   <div
     class="text-decoration-none background-dark-2 rounded-3 w-100 mb-3 position-relative overflow-hidden"
   >
-    <div class="p-3 w-100">
-      <div class="points-1 text-light w-100">
-        {{ notification.type.title }}
-      </div>
-      <div class="text-light fs-14 mt-2 w-100" :class="'points-' + dotted">
-        {{ notification.message }}
+    <div class="p-3 w-100 d-flex flex-column h-100 justify-content-between">
+      <div class="">
+        <div class="points-1 text-light w-100">
+          {{ notification.type.title }}
+        </div>
+        <div class="text-light fs-14 mt-2 w-100" :class="'points-' + dotted">
+          {{ notification.message }}
+        </div>
       </div>
       <div class="mt-3 w-100 d-flex align-items-center justify-content-between">
         <div class="text-primary fs-14" v-if="notification.created_at">

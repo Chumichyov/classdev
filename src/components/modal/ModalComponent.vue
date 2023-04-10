@@ -19,6 +19,7 @@ export default {
       class="modal"
       :id="'notification-' + notification.id"
       data-bs-keyboard="false"
+      data-bs-backdrop="static"
       tabindex="-1"
       aria-hidden="true"
     >
@@ -40,13 +41,15 @@ export default {
               <ol class="breadcrumb">
                 <li class="breadcrumb-item" data-bs-dismiss="modal">
                   <router-link
-                    to="/notifications?q=Task&all=true"
+                    :to="'/courses/' + notification.course.id"
                     class="text-decoration-none"
                     >Курс</router-link
                   >
                 </li>
-                <li class="breadcrumb-item points-1" aria-current="page">
-                  <router-link to="/" class="text-decoration-none"
+                <li class="breadcrumb-item points-1" data-bs-dismiss="modal">
+                  <router-link
+                    :to="'/courses/' + notification.course.id"
+                    class="text-decoration-none"
                     >Задание</router-link
                   >
                 </li>

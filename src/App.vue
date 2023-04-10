@@ -1,8 +1,12 @@
 <template>
-  <div class="min-vh-100 main-grid">
-    <component :is="layout">
-      <router-view></router-view>
-    </component>
+  <div class="">
+    <transition name="fade" mode="out-in">
+      <component :is="layout">
+        <router-view v-slot="{ Component }">
+          <component :is="Component" />
+        </router-view>
+      </component>
+    </transition>
   </div>
 </template>
 
@@ -30,4 +34,14 @@ export default {
 @import "~bootstrap/dist/css/bootstrap.min.css";
 @import "@/assets/style.css";
 @import "@splidejs/splide/dist/css/themes/splide-default.min.css";
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: 600ms ease all;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
 </style>

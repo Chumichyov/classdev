@@ -1,14 +1,11 @@
 <script>
+import { mapGetters } from "vuex";
+
 export default {
   name: "DefaultHeader",
 
-  methods: {
-    notifications(type) {
-      this.$store.dispatch("notifications", {
-        page: 1,
-        type: type,
-      });
-    },
+  computed: {
+    ...mapGetters(["authUser", "loadStatusAuthUser"]),
   },
 };
 </script>
@@ -19,17 +16,13 @@ export default {
     style="min-height: 60px"
   >
     <router-link
-      to="/"
+      to="/main"
       class="d-flex align-items-center text-light fs-3 py-2 text-decoration-none"
       >Classdev</router-link
     >
     <div class="d-flex align-items-center justify-content-center">
       <div class="me-3 d-flex align-items-center justify-content-center">
-        <router-link
-          to="/notifications?q=Inbox&all=true"
-          class="d-flex"
-          @click.prevent="notifications('Inbox')"
-        >
+        <router-link to="/notifications?q=Inbox&all=true" class="d-flex">
           <img
             src="@/assets/Bell.png"
             alt=""
@@ -48,9 +41,17 @@ export default {
       </div>
       <div class="">
         <div
-          class="border rounded-circle"
+          class="d-flex align-items-center justify-content-start"
           style="width: 24px; height: 24px"
-        ></div>
+        >
+          <img
+            v-if="loadStatusAuthUser === 'READY'"
+            class="rounded-circle position-relative w-100"
+            alt=""
+            :src="this.$url + authUser.information.photo_path"
+            style="width: 24px; height: 24px"
+          />
+        </div>
       </div>
     </div>
   </header>

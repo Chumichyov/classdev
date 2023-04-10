@@ -1,6 +1,6 @@
 <script>
-import { mapGetters } from "vuex";
 import InputComponent from "../../InputComponent.vue";
+import { mapGetters } from "vuex";
 
 export default {
   name: "DefaultType",
@@ -8,10 +8,6 @@ export default {
   data: () => ({
     query: "",
   }),
-
-  mounted() {
-    this.$store.dispatch("indexCourses");
-  },
 
   computed: {
     ...mapGetters(["courses"]),
@@ -37,20 +33,25 @@ export default {
       </form>
     </div>
     <div class="" v-for="(course, index) in courses" :key="course.id">
-      <div
-        class="d-flex align-items-center justify-content-start"
-        :class="index > 0 ? 'mt-2' : ''"
+      <router-link
+        :to="'/courses/' + course.id + '?q=Task'"
+        class="text-decoration-none"
       >
-        <img
-          class="rounded-circle position-relative w-100"
-          style="max-width: 21px; max-height: 21px"
-          :src="this.$url + course.leader.information.photo_path"
-          alt=""
-        />
-        <span class="text-light fs-14 points-1 ms-2">
-          {{ course.title }}
-        </span>
-      </div>
+        <div
+          class="d-flex align-items-center justify-content-start"
+          :class="index > 0 ? 'mt-2' : ''"
+        >
+          <img
+            class="rounded-circle position-relative w-100"
+            style="max-width: 21px; max-height: 21px"
+            :src="this.$url + course.leader.information.photo_path"
+            alt=""
+          />
+          <span class="text-light fs-14 points-1 ms-2">
+            {{ course.title }}
+          </span>
+        </div>
+      </router-link>
     </div>
   </div>
 </template>

@@ -10,12 +10,15 @@ import MomentPlugin from "./plugins/moment";
 import "./registerServiceWorker";
 import "bootstrap/dist/js/bootstrap";
 
-createApp(App)
-  .use(store)
-  .use(router)
-  .use(VueSplide)
-  .use(splider)
-  .use(ApiPlugin)
-  .use(UrlPlugin)
-  .use(MomentPlugin)
-  .mount("#app");
+const app = createApp(App);
+
+app.use(store);
+app.use(router);
+app.use(VueSplide);
+app.use(splider);
+app.use(ApiPlugin);
+app.use(UrlPlugin);
+app.use(MomentPlugin);
+app.mount("#app");
+
+app.config.devtools = false;

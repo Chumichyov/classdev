@@ -7,12 +7,8 @@ import ModalComponent from "@/components/modal/ModalComponent.vue";
 export default {
   name: "MainView",
 
-  mounted() {
-    this.$store.dispatch("notifications");
-  },
-
   computed: {
-    ...mapGetters(["notifications"]),
+    ...mapGetters(["notificationsDefault"]),
   },
 
   methods: {
@@ -30,9 +26,7 @@ export default {
 </script>
 
 <template>
-  <div
-    class="d-flex align-items-start justify-content-start min-vh-100 overflow-hidden"
-  >
+  <div class="d-flex align-items-start justify-content-start overflow-hidden">
     <sidebar-component></sidebar-component>
     <div class="main-px pt-4 w-100 overflow-hidden">
       <div class="d-flex align-items-center justify-content-between w-100">
@@ -46,17 +40,17 @@ export default {
       </div>
       <div
         class="text-light fs-2 w-100 text-center pt-4 pb-5 border-bottom border-gray-1 text-gray-1 text-center"
-        v-if="notifications == ''"
+        v-if="notificationsDefault == ''"
       >
         Упс... Похоже здесь нет уведомлений
       </div>
       <div
         class="pt-3 d-flex align-items-start justify-content-start"
-        v-if="notifications != ''"
+        v-if="notificationsDefault != ''"
       >
         <div
           class=""
-          v-for="notification in notifications"
+          v-for="notification in notificationsDefault"
           :key="notification.id"
         >
           <modal-component :notification="notification"></modal-component>
@@ -67,7 +61,7 @@ export default {
         >
           <splide-slide
             class="position-relative"
-            v-for="notification in notifications"
+            v-for="notification in notificationsDefault"
             :key="notification.id"
           >
             <notification-block-component

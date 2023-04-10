@@ -1,9 +1,11 @@
-export default (api, router) => {
+export default (api, router, LoadingStatuses) => {
   return {
     state: {
       notificationSearch: "",
 
       notifications: [],
+
+      notificationsDefault: [],
 
       pagination: [],
     },
@@ -15,6 +17,10 @@ export default (api, router) => {
 
       notifications: (state) => {
         return state.notifications;
+      },
+
+      notificationsDefault: (state) => {
+        return state.notificationsDefault;
       },
 
       pagination: (state) => {
@@ -31,6 +37,7 @@ export default (api, router) => {
           all: "true",
         }
       ) {
+        ctx.commit("setLoadStatusLoadedNotifications", LoadingStatuses.Loading);
         await api.notification
           .notifications({
             page: data.page,
@@ -39,17 +46,59 @@ export default (api, router) => {
             all: data.all,
           })
           .then((res) => {
+            if (res.data.data.length == 0)
+              ctx.commit(
+                "setLoadStatusLoadedNotifications",
+                LoadingStatuses.Empty
+              );
+            else
+              ctx.commit(
+                "setLoadStatusLoadedNotifications",
+                LoadingStatuses.Ready
+              );
+
             ctx.commit("setPagination", res.data.meta);
             ctx.commit("setNotifications", res.data.data);
           })
           .catch((err) => {
+            ctx.commit(
+              "setLoadStatusLoadedNotifications",
+              LoadingStatuses.Error
+            );
+
             ctx.commit("setError", {
               message: err.response.data.message,
               status: err.response.status,
             });
-            router.push("/error");
+
             if (err.response.status == 401) {
-              ctx.dispatch("logout");
+              ctx.dispatch("logout", true);
+            }
+          });
+      },
+
+      async notificationsDefault(ctx) {
+        ctx.commit("setLoadStatusNotifications", LoadingStatuses.Loading);
+        await api.notification
+          .notificationsDefault()
+          .then((res) => {
+            if (res.data.data.length == 0)
+              ctx.commit("setLoadStatusNotifications", LoadingStatuses.Empty);
+            else
+              ctx.commit("setLoadStatusNotifications", LoadingStatuses.Ready);
+
+            ctx.commit("setNotificationsDefault", res.data.data);
+          })
+          .catch((err) => {
+            ctx.commit("setLoadStatusNotifications", LoadingStatuses.Error);
+
+            ctx.commit("setError", {
+              message: err.response.data.message,
+              status: err.response.status,
+            });
+
+            if (err.response.status == 401) {
+              ctx.dispatch("logout", true);
             }
           });
       },
@@ -58,6 +107,10 @@ export default (api, router) => {
     mutations: {
       setNotifications(state, notifications) {
         state.notifications = notifications;
+      },
+
+      setNotificationsDefault(state, notificationsDefault) {
+        state.notificationsDefault = notificationsDefault;
       },
 
       setPagination(state, pagination) {

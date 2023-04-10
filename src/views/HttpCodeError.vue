@@ -3,6 +3,11 @@ import { mapGetters } from "vuex";
 
 export default {
   name: "HttpCodeError",
+
+  mounted() {
+    console.log(this.error);
+  },
+
   computed: {
     ...mapGetters(["error"]),
   },
@@ -22,7 +27,7 @@ export default {
       </div>
     </div>
     <div class="mt-4">
-      <router-link class="btn btn-primary" v-if="error.status != 401" to="/main"
+      <router-link class="btn btn-primary" v-if="error.status != 401" to="/"
         >Главная</router-link
       >
       <router-link class="btn btn-primary" v-else to="/login"

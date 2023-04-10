@@ -3,5 +3,9 @@ export default function (instance) {
     notifications(payload) {
       return instance.post("notifications", payload);
     },
+
+    notificationsDefault(payload) {
+      return instance.post("notifications/default", payload);
+    },
   };
 }

@@ -48,9 +48,15 @@ export default (api, router) => {
           });
       },
 
-      async logout(ctx) {
+      async logout(ctx, error = false) {
         window.localStorage.removeItem("token");
-        router.push("/login");
+
+        if (!error) {
+          router.push("/login");
+        } else {
+          router.push("/error");
+        }
+
         ctx.commit("setCourses", []);
         ctx.commit("setNotifications", []);
         ctx.commit("setPagination", []);

@@ -13,7 +13,9 @@ const routes = [
   {
     path: "/:pathMatch(.*)*",
     name: "error",
-    meta: { layout: "empty" },
+    meta: {
+      layout: "empty",
+    },
     component: () => import("@/views/HttpCodeError.vue"),
   },
 
@@ -58,6 +60,20 @@ const routes = [
     meta: { layout: "default", requiresAuth: true, sidebar: "notification" },
     component: () => import("@/views/NotificationsView.vue"),
   },
+
+  {
+    path: "/courses/:course",
+    name: "course",
+    meta: { layout: "default", requiresAuth: true },
+    component: () => import("@/views/CourseView.vue"),
+  },
+
+  {
+    path: "/courses/:course/tasks/:task",
+    name: "task",
+    meta: { layout: "default", requiresAuth: true },
+    component: () => import("@/views/TaskView.vue"),
+  },
 ];
 
 const router = createRouter({
@@ -71,7 +87,7 @@ router.beforeEach((to, from, next) => {
       next();
       return;
     } else {
-      router.push("/login");
+      router.push("/error");
     }
   } else if (to.matched.some((record) => record.meta.requiresAuth == false)) {
     if (localStorage.getItem("token") !== null) {

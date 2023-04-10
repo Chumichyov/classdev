@@ -1,175 +1,94 @@
 import { createStore } from "vuex";
 import api from "../api";
 import router from "../router";
+import { LoadingStatuses } from "@/types";
 
 import authModule from "./modules/auth";
 import courseModule from "./modules/course";
 import notificationModule from "./modules/notification";
+import userModule from "./modules/user";
+import taskModule from "./modules/task";
 
 export default createStore({
   state: {
-    //   courses: [],
     error: {
       message: "Страница не найдена",
       status: "404",
     },
-    //   notificationSearch: "",
-    //   notifications: [],
-    //   pagination: [],
+
+    loadStatusAuthUser: null,
+    loadStatusCourses: null,
+    loadStatusNotifications: null,
+
+    loadStatusLoadedCourse: null,
+    loadStatusLoadedTasks: null,
+    loadStatusLoadedNotifications: null,
   },
   getters: {
-    //   auth: (state) => {
-    //     return state.auth;
-    //   },
-    //   notificationSearch: (state) => {
-    //     return state.notificationSearch;
-    //   },
-    //   notifications: (state) => {
-    //     return state.notifications;
-    //   },
-    //   pagination: (state) => {
-    //     return state.pagination;
-    //   },
-    //   courses: (state) => {
-    //     return state.courses;
-    //   },
+    loadStatusCourses: (state) => {
+      return state.loadStatusCourses;
+    },
+
+    loadStatusAuthUser: (state) => {
+      return state.loadStatusAuthUser;
+    },
+
+    loadStatusLoadedCourse: (state) => {
+      return state.loadStatusLoadedCourse;
+    },
+
+    loadStatusLoadedTasks: (state) => {
+      return state.loadStatusLoadedTasks;
+    },
+
+    loadStatusNotifications: (state) => {
+      return state.loadStatusNotifications;
+    },
+
+    loadStatusLoadedNotifications: (state) => {
+      return state.loadStatusLoadedNotifications;
+    },
+
     error: (state) => {
       return state.error;
     },
   },
-  // actions: {
-  //   async indexCourses(ctx) {
-  //     await api.course
-  //       .indexCourses()
-  //       .then((res) => {
-  //         ctx.commit("setCourses", res.data.data);
-  //       })
-  //       .catch((err) => {
-  //         ctx.commit("setError", {
-  //           message: err.response.data.message,
-  //           status: err.response.status,
-  //         });
-  //         if (err.response.status == 401) {
-  //           ctx.dispatch("logout");
-  //         }
-  //         router.push("/error");
-  //       });
-  //   },
-  //   async storeCourses(ctx, course) {
-  //     await api.course
-  //       .storeCourses(course)
-  //       .then(() => {
-  //         router.push("/main");
-  //       })
-  //       .catch((err) => {
-  //         console.log(err);
-  //         ctx.commit("setError", {
-  //           message: err.response.data.message,
-  //           status: err.response.status,
-  //         });
-  //         if (err.response.status == 401) {
-  //           ctx.dispatch("logout");
-  //         }
-  //         router.push("/error");
-  //       });
-  //   },
-  //   async notifications(
-  //     ctx,
-  //     data = {
-  //       page: 1,
-  //       type: "Task",
-  //       all: "true",
-  //     }
-  //   ) {
-  //     await api.notification
-  //       .notifications({
-  //         page: data.page,
-  //         type: data.type,
-  //         search: ctx.state.notificationSearch,
-  //         all: data.all,
-  //       })
-  //       .then((res) => {
-  //         console.log(res);
-  //         ctx.commit("setPagination", res.data.meta);
-  //         ctx.commit("setNotifications", res.data.data);
-  //       })
-  //       .catch((err) => {
-  //         ctx.commit("setError", {
-  //           message: err.response.data.message,
-  //           status: err.response.status,
-  //         });
-  //         router.push("/error");
-  //         if (err.response.status == 401) {
-  //           ctx.dispatch("logout");
-  //         }
-  //       });
-  //   },
-  //   async signIn(ctx, auth) {
-  //     await api.auth
-  //       .signIn({
-  //         email: auth.email,
-  //         password: auth.password,
-  //       })
-  //       .then((res) => {
-  //         window.localStorage.setItem("token", res.data.token);
-  //         router.push("/main");
-  //       })
-  //       .catch((err) => {
-  //         ctx.commit("setError", {
-  //           message: err.response.data.errors.message,
-  //           code: err.response.status,
-  //         });
-  //       });
-  //   },
-  //   async signUp(ctx, auth) {
-  //     await api.auth
-  //       .signUp({
-  //         email: auth.email,
-  //         name: auth.name,
-  //         surname: auth.surname,
-  //         password: auth.password,
-  //         password_confirmation: auth.password_confirmation,
-  //       })
-  //       .then((res) => {
-  //         window.localStorage.setItem("token", res.data.token);
-  //         router.push("/main");
-  //       })
-  //       .catch((err) => {
-  //         ctx.commit("setError", {
-  //           message: err.response.data.errors.message,
-  //           code: err.response.status,
-  //         });
-  //       });
-  //   },
-  //   async logout(ctx) {
-  //     window.localStorage.removeItem("token");
-  //     router.push("/login");
-  //     ctx.commit("setCourses", []);
-  //   },
-  // },
+  actions: {},
   mutations: {
-    //   setAuth(state, auth) {
-    //     state.auth = auth;
-    //   },
+    setLoadStatusCourses(state, loadStatusCourses) {
+      state.loadStatusCourses = loadStatusCourses;
+    },
+
+    setLoadStatusAuthUser(state, loadStatusAuthUser) {
+      state.loadStatusAuthUser = loadStatusAuthUser;
+    },
+
+    setLoadStatusNotifications(state, loadStatusNotifications) {
+      state.loadStatusNotifications = loadStatusNotifications;
+    },
+
+    setLoadStatusLoadedNotifications(state, loadStatusLoadedNotifications) {
+      state.loadStatusLoadedNotifications = loadStatusLoadedNotifications;
+    },
+
+    setLoadStatusLoadedCourse(state, loadStatusLoadedCourse) {
+      state.loadStatusLoadedCourse = loadStatusLoadedCourse;
+    },
+
+    setLoadStatusLoadedTasks(state, loadStatusLoadedTasks) {
+      state.loadStatusLoadedTasks = loadStatusLoadedTasks;
+    },
+
     setError(state, error) {
       state.error = error;
     },
-    //   setCourses(state, courses) {
-    //     state.courses = courses;
-    //   },
-    //   setNotifications(state, notifications) {
-    //     state.notifications = notifications;
-    //   },
-    //   setPagination(state, pagination) {
-    //     state.pagination = pagination;
-    //   },
-    //   setNotificationSearch(state, notificationSearch) {
-    //     state.notificationSearch = notificationSearch;
-    //   },
   },
+
   modules: {
     auth: authModule(api, router),
-    course: courseModule(api, router),
-    notification: notificationModule(api, router),
+    course: courseModule(api, router, LoadingStatuses),
+    notification: notificationModule(api, router, LoadingStatuses),
+    user: userModule(api, LoadingStatuses),
+    task: taskModule(api, LoadingStatuses),
   },
 });
