@@ -112,6 +112,16 @@ export default {
           </splide-slide>
         </splide>
       </div>
+      <pre v-highlightjs><code class="php">
+        foreach (Storage::allDirectories('public/' . $path) as $zipFolder) {
+          $fold = Folder::create([
+            'task_id' => $task->id,
+            'folder_id' => Folder::where('folder_path', '/storage/' . pathinfo(mb_substr($zipFolder, 7), PATHINFO_DIRNAME))->first()->id,
+            'original_name' => pathinfo($zipFolder, PATHINFO_BASENAME),
+            'folder_path' => '/storage/' . mb_substr($zipFolder, 7)
+          ]);
+        }
+      </code></pre>
     </div>
   </div>
 </template>
