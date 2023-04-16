@@ -9,6 +9,7 @@ import UrlPlugin from "./plugins/url";
 import MomentPlugin from "./plugins/moment";
 import "./registerServiceWorker";
 import "bootstrap/dist/js/bootstrap";
+import "bootstrap-icons/font/bootstrap-icons.css";
 
 const app = createApp(App);
 
@@ -20,5 +21,3 @@ app.use(ApiPlugin);
 app.use(UrlPlugin);
 app.use(MomentPlugin);
 app.mount("#app");
-
-app.config.devtools = false;

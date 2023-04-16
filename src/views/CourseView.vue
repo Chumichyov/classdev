@@ -11,18 +11,88 @@ export default {
   }),
 
   mounted() {
-    this.$store.dispatch("getCourse", this.$route.params.course);
-    this.$store.dispatch("getTasks", this.$route.params.course);
+    if (
+      (this.$route.query.q == "Grade" && this.isTeacher === false) ||
+      (this.$route.query.q == "Settings" && this.isTeacher === false)
+    ) {
+      this.$router.push(`/courses/${this.$route.params.course}?q=Task`);
+    }
+
+    if (
+      this.loadStatusLoadedCourse != "READY" &&
+      this.loadedCourse.id != this.$route.params.course
+    ) {
+      this.$store.dispatch("getCourse", this.$route.params.course);
+      this.$store.dispatch("getTasks", this.$route.params.course);
+    }
   },
 
   computed: {
     ...mapGetters([
       "loadedCourse",
+      "authUser",
       "loadStatusLoadedCourse",
       "loadStatusLoadedTasks",
+      "loadStatusLoadedTask",
+      "loadStatusLoadedFiles",
       "tasks",
       "dates",
+      "isTeacher",
+      "loadedFolders",
     ]),
+  },
+
+  methods: {
+    toTask(task, folder = null) {
+      this.$store
+        .dispatch("getTask", {
+          course: this.$route.params.course,
+          task: task,
+        })
+        .then(() => {
+          if (folder == null) {
+            if (this.loadStatusLoadedTask == "READY") {
+              this.$router.push({
+                name: "task",
+                params: {
+                  course: this.loadedCourse.id,
+                  task: task,
+                },
+              });
+            }
+          }
+        });
+
+      if (folder != null) {
+        this.$store
+          .dispatch("getFiles", {
+            course: this.$route.params.course,
+            task: task,
+            folder: folder,
+          })
+          .then(() => {
+            if (this.loadStatusLoadedFiles == "READY") {
+              // this.$router.push({
+              //   name: "folder",
+              //   params: {
+              //     course: this.loadedCourse.id,
+              //     task: task,
+              //     folder: folder,
+              //   },
+              // });
+              if (this.loadStatusLoadedTask == "READY") {
+                this.$router.push({
+                  name: "task",
+                  params: {
+                    course: this.loadedCourse.id,
+                    task: task,
+                  },
+                });
+              }
+            }
+          });
+      }
+    },
   },
 
   components: {
@@ -36,7 +106,18 @@ export default {
   <div class="pt-4 text-light position-relative">
     <linear-preloader-component
       :load="loadStatusLoadedCourse"
-      :load_2="loadStatusLoadedTasks"
+    ></linear-preloader-component>
+
+    <linear-preloader-component
+      :load="loadStatusLoadedTasks"
+    ></linear-preloader-component>
+
+    <linear-preloader-component
+      :load="loadStatusLoadedTask"
+    ></linear-preloader-component>
+
+    <linear-preloader-component
+      :load="loadStatusLoadedFiles"
     ></linear-preloader-component>
 
     <div class="">
@@ -78,7 +159,7 @@ export default {
               Мессенджер
             </router-link>
           </div>
-          <div class="me-2 px-2 py-1 text">
+          <div class="me-2 px-2 py-1 text" v-if="isTeacher">
             <router-link
               :class="this.$route.query.q == 'Grade' ? 'active' : 'text-gray-1'"
               class="text text-decoration-none"
@@ -87,7 +168,7 @@ export default {
               Оценки
             </router-link>
           </div>
-          <div class="me-2 px-2 py-1 text">
+          <div class="me-2 px-2 py-1 text" v-if="isTeacher">
             <router-link
               :class="
                 this.$route.query.q == 'Settings' ? 'active' : 'text-gray-1'
@@ -103,9 +184,14 @@ export default {
       <div class="main-px mt-4">
         <div class="" v-if="this.$route.query.q == 'Task'">
           <div class="d-flex align-items-center justify-content-start">
-            <button class="btn btn-primary px-2 py-1">Создать</button>
+            <button v-if="isTeacher" class="btn btn-primary px-2 py-1">
+              Создать
+            </button>
 
-            <button class="bg-transparent border-0 mx-3">
+            <button
+              class="bg-transparent border-0 me-3"
+              :class="isTeacher ? 'ms-3' : ''"
+            >
               <img src="@/assets/funnel.png" alt="" />
             </button>
 
@@ -122,27 +208,27 @@ export default {
               "
             >
               <div
-                class="w-100 border rounded border-gray-1 mb-4 p-3 pb-4"
+                class="w-100 border rounded border-gray-1 overflow-hidden"
                 v-for="date in dates"
                 :key="date"
               >
-                <div class="text-light fs-18">
+                <div class="text-light fs-18 py-2 px-3">
                   {{ date }}
                 </div>
-                <div class="" v-for="task in tasks" :key="task.id">
+                <div class="" v-for="(task, index) in tasks" :key="task.id">
                   <div
-                    class="d-flex align-items-center justify-content-start mt-3"
+                    class="d-flex align-items-center justify-content-start"
                     v-if="task.created_at === date"
                   >
-                    <router-link
-                      class="d-flex w-100 align-items-center justify-content-start text-decoration-none text-light"
-                      :to="{
-                        name: 'task',
-                        params: {
-                          course: loadedCourse.id,
-                          task: task.id,
-                        },
-                      }"
+                    <div
+                      :class="tasks.length - 1 != index ? 'border-bottom' : ''"
+                      class="d-flex w-100 align-items-center my-hover justify-content-start text-decoration-none text-light cursor-pointer py-2 px-3 border-gray-1"
+                      @click.prevent="
+                        toTask(
+                          task.id,
+                          task.folders != '' ? task.folders[0].id : null
+                        )
+                      "
                     >
                       <img
                         v-if="task.type.id == 1"
@@ -151,10 +237,14 @@ export default {
                       />
                       <img v-else src="@/assets/info-lg.png" alt="" />
 
-                      <div class="ms-2 points-1">
+                      <div class="ms-2 points-1 flex-fill">
                         {{ task.title }}
                       </div>
-                    </router-link>
+                      <div class="text-gray-1 fs-14">
+                        {{ task.created_at }}
+                      </div>
+                      <!-- </router-link> -->
+                    </div>
                   </div>
                 </div>
                 <!-- <div

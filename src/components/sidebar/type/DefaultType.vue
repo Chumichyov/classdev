@@ -10,7 +10,34 @@ export default {
   }),
 
   computed: {
-    ...mapGetters(["courses"]),
+    ...mapGetters([
+      "courses",
+      "loadStatusLoadedCourse",
+      "loadStatusLoadedTasks",
+    ]),
+  },
+
+  methods: {
+    toCourse(course) {
+      this.$store.dispatch("getCourse", course);
+      this.$store.dispatch("getTasks", course).then(() => {
+        if (
+          this.loadStatusLoadedCourse == "READY" &&
+          (this.loadStatusLoadedTasks == "READY" ||
+            this.loadStatusLoadedTasks == "EMPTY")
+        ) {
+          this.$router.push({
+            name: "course",
+            params: {
+              course: course,
+            },
+            query: {
+              q: "Task",
+            },
+          });
+        }
+      });
+    },
   },
 
   components: {
@@ -33,9 +60,9 @@ export default {
       </form>
     </div>
     <div class="" v-for="(course, index) in courses" :key="course.id">
-      <router-link
-        :to="'/courses/' + course.id + '?q=Task'"
-        class="text-decoration-none"
+      <div
+        class="text-decoration-none cursor-pointer"
+        @click.prevent="toCourse(course.id)"
       >
         <div
           class="d-flex align-items-center justify-content-start"
@@ -51,7 +78,7 @@ export default {
             {{ course.title }}
           </span>
         </div>
-      </router-link>
+      </div>
     </div>
   </div>
 </template>

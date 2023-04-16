@@ -46,6 +46,7 @@ export default (api, router, LoadingStatuses) => {
             all: data.all,
           })
           .then((res) => {
+            console.log(data.type);
             if (res.data.data.length == 0)
               ctx.commit(
                 "setLoadStatusLoadedNotifications",

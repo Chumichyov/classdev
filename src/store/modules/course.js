@@ -44,25 +44,30 @@ export default (api, router, LoadingStatuses) => {
 
       async getCourse(ctx, course) {
         ctx.commit("setLoadStatusLoadedCourse", LoadingStatuses.Loading);
-        await api.course
-          .getCourse(course)
-          .then((res) => {
-            if (res.data.data.length == 0)
-              ctx.commit("setLoadStatusLoadedCourse", LoadingStatuses.Empty);
-            else ctx.commit("setLoadStatusLoadedCourse", LoadingStatuses.Ready);
+        if (ctx.getters.loadedCourse.id != course) {
+          await api.course
+            .getCourse(course)
+            .then((res) => {
+              if (res.data.data.length == 0)
+                ctx.commit("setLoadStatusLoadedCourse", LoadingStatuses.Empty);
+              else
+                ctx.commit("setLoadStatusLoadedCourse", LoadingStatuses.Ready);
 
-            ctx.commit("setLoadedCourse", res.data.data);
-          })
-          .catch((err) => {
-            ctx.commit("setError", {
-              message: err.response.data.message,
-              status: err.response.status,
+              ctx.commit("setLoadedCourse", res.data.data);
+            })
+            .catch((err) => {
+              ctx.commit("setError", {
+                message: err.response.data.message,
+                status: err.response.status,
+              });
+
+              if (err.response.status == 401) {
+                ctx.dispatch("logout", true);
+              }
             });
-
-            if (err.response.status == 401) {
-              ctx.dispatch("logout", true);
-            }
-          });
+        } else {
+          ctx.commit("setLoadStatusLoadedCourse", LoadingStatuses.Ready);
+        }
       },
 
       async storeCourses(ctx, course) {

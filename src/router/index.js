@@ -74,6 +74,13 @@ const routes = [
     meta: { layout: "default", requiresAuth: true },
     component: () => import("@/views/TaskView.vue"),
   },
+
+  {
+    path: "/courses/:course/tasks/:task/folders/:folder",
+    name: "folder",
+    meta: { layout: "default", requiresAuth: true },
+    component: () => import("@/views/TaskView.vue"),
+  },
 ];
 
 const router = createRouter({

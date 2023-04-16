@@ -14,16 +14,19 @@ export default {
   }),
 
   mounted() {
-    this.$store.dispatch("notifications", {
-      page: 1,
-      type: this.$route.query.q,
-      all: this.$route.query.all,
-    });
     this.$route.query.search
       ? this.$router.push(
           `/notifications?q=${this.$route.query.q}&all=${this.$route.query.all}`
         )
       : "";
+
+    if (this.loadStatusLoadedNotifications != "READY") {
+      this.$store.dispatch("notifications", {
+        page: 1,
+        type: this.$route.query.q,
+        all: this.$route.query.all,
+      });
+    }
   },
 
   computed: {
@@ -69,7 +72,9 @@ export default {
     <linear-preloader-component
       :load="loadStatusLoadedNotifications"
     ></linear-preloader-component>
+
     <sidebar-component></sidebar-component>
+
     <div class="d-flex w-100 justify-content-center flex-column pt-4">
       <div class="main-px mw-768 w-100">
         <div class>
@@ -115,7 +120,7 @@ export default {
             ></input-component>
           </form>
         </div>
-        <div class v-if="loadStatusLoadedNotifications === 'READY'">
+        <div class>
           <transition-group name="main">
             <div class style="min-height: 884px">
               <div

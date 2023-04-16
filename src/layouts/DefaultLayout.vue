@@ -36,7 +36,11 @@ export default {
   >
     <template #content>
       <default-header class="" style="z-index: 100" />
-      <router-view class="" style=""></router-view>
+      <router-view class="" style="" v-slot="{ Component }">
+        <!-- <transition name="fade" mode="out-in"> -->
+        <component :is="Component" />
+        <!-- </transition> -->
+      </router-view>
     </template>
   </preloader-component>
 </template>

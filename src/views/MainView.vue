@@ -3,17 +3,42 @@ import { mapGetters } from "vuex";
 import SidebarComponent from "@/components/sidebar/SidebarComponent.vue";
 import NotificationBlockComponent from "@/components/notification/NotificationBlockComponent.vue";
 import ModalComponent from "@/components/modal/ModalComponent.vue";
+import LinearPreloaderComponent from "@/components/LinearPreloaderComponent.vue";
 
 export default {
   name: "MainView",
 
   computed: {
-    ...mapGetters(["notificationsDefault"]),
+    ...mapGetters([
+      "notificationsDefault",
+      "loadStatusLoadedCourse",
+      "loadStatusLoadedTasks",
+      "loadStatusLoadedNotifications",
+    ]),
   },
 
   methods: {
-    logout() {
-      this.$store.dispatch("logout");
+    toNotifications() {
+      this.$store
+        .dispatch("notifications", {
+          page: 1,
+          type: "Task",
+          all: "true",
+        })
+        .then(() => {
+          if (
+            this.loadStatusLoadedNotifications == "READY" ||
+            this.loadStatusLoadedNotifications == "EMPTY"
+          ) {
+            this.$router.push({
+              name: "notifications",
+              query: {
+                q: "Task",
+                all: "true",
+              },
+            });
+          }
+        });
     },
   },
 
@@ -21,22 +46,38 @@ export default {
     SidebarComponent,
     NotificationBlockComponent,
     ModalComponent,
+    LinearPreloaderComponent,
   },
 };
 </script>
 
 <template>
-  <div class="d-flex align-items-start justify-content-start overflow-hidden">
+  <div
+    class="d-flex align-items-start justify-content-start overflow-hidden position-relative"
+  >
+    <linear-preloader-component
+      :load="loadStatusLoadedCourse"
+    ></linear-preloader-component>
+
+    <linear-preloader-component
+      :load="loadStatusLoadedTasks"
+    ></linear-preloader-component>
+
+    <linear-preloader-component
+      :load="loadStatusLoadedNotifications"
+    ></linear-preloader-component>
+
     <sidebar-component></sidebar-component>
+
     <div class="main-px pt-4 w-100 overflow-hidden">
       <div class="d-flex align-items-center justify-content-between w-100">
         <div class="text-light">Новое в участиях</div>
-        <router-link
-          to="/notifications?q=Task&all=true"
-          class="btn btn-primary text-light px-2 py-1"
+        <div
+          @click.prevent="toNotifications"
+          class="btn btn-primary text-light px-2 py-1 cursor-pointer"
         >
           Просмотреть все
-        </router-link>
+        </div>
       </div>
       <div
         class="text-light fs-2 w-100 text-center pt-4 pb-5 border-bottom border-gray-1 text-gray-1 text-center"
@@ -71,7 +112,6 @@ export default {
           </splide-slide>
         </splide>
       </div>
-      <button class="btn btn-primary" @click.prevent="logout">Выйти</button>
     </div>
   </div>
 </template>

@@ -8,6 +8,7 @@ import courseModule from "./modules/course";
 import notificationModule from "./modules/notification";
 import userModule from "./modules/user";
 import taskModule from "./modules/task";
+import folderModule from "./modules/folder";
 
 export default createStore({
   state: {
@@ -22,6 +23,9 @@ export default createStore({
 
     loadStatusLoadedCourse: null,
     loadStatusLoadedTasks: null,
+    loadStatusLoadedTask: null,
+    loadStatusLoadedFiles: null,
+    loadStatusLoadedMainFiles: null,
     loadStatusLoadedNotifications: null,
   },
   getters: {
@@ -39,6 +43,18 @@ export default createStore({
 
     loadStatusLoadedTasks: (state) => {
       return state.loadStatusLoadedTasks;
+    },
+
+    loadStatusLoadedTask: (state) => {
+      return state.loadStatusLoadedTask;
+    },
+
+    loadStatusLoadedFiles: (state) => {
+      return state.loadStatusLoadedFiles;
+    },
+
+    loadStatusLoadedMainFiles: (state) => {
+      return state.loadStatusLoadedMainFiles;
     },
 
     loadStatusNotifications: (state) => {
@@ -79,6 +95,18 @@ export default createStore({
       state.loadStatusLoadedTasks = loadStatusLoadedTasks;
     },
 
+    setLoadStatusLoadedTask(state, loadStatusLoadedTask) {
+      state.loadStatusLoadedTask = loadStatusLoadedTask;
+    },
+
+    setLoadStatusLoadedFiles(state, loadStatusLoadedFiles) {
+      state.loadStatusLoadedFiles = loadStatusLoadedFiles;
+    },
+
+    setLoadStatusLoadedMainFiles(state, loadStatusLoadedMainFiles) {
+      state.loadStatusLoadedMainFiles = loadStatusLoadedMainFiles;
+    },
+
     setError(state, error) {
       state.error = error;
     },
@@ -89,6 +117,7 @@ export default createStore({
     course: courseModule(api, router, LoadingStatuses),
     notification: notificationModule(api, router, LoadingStatuses),
     user: userModule(api, LoadingStatuses),
-    task: taskModule(api, LoadingStatuses),
+    task: taskModule(api, router, LoadingStatuses),
+    folder: folderModule(api, LoadingStatuses),
   },
 });

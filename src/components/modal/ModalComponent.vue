@@ -1,4 +1,6 @@
 <script>
+import { mapGetters } from "vuex";
+
 export default {
   name: "ModalComponent",
 
@@ -6,6 +8,73 @@ export default {
     notification: {
       type: Object,
       required: true,
+    },
+  },
+
+  computed: {
+    ...mapGetters([
+      "loadStatusLoadedCourse",
+      "loadStatusLoadedTasks",
+      "loadStatusLoadedTask",
+    ]),
+  },
+
+  methods: {
+    toCourse(course) {
+      this.$store.dispatch("getCourse", course);
+      this.$store.dispatch("getTasks", course).then(() => {
+        if (
+          this.loadStatusLoadedCourse == "READY" &&
+          (this.loadStatusLoadedTasks == "READY" ||
+            this.loadStatusLoadedTasks == "EMPTY")
+        ) {
+          this.$router.push({
+            name: "course",
+            params: {
+              course: course,
+            },
+            query: {
+              q: "Task",
+            },
+          });
+        }
+      });
+    },
+
+    toTask(course, task, folder = null) {
+      this.$store.dispatch("getCourse", course);
+      this.$store.dispatch("getTask", { course, task }).then(() => {
+        if (
+          folder == null &&
+          this.loadStatusLoadedCourse == "READY" &&
+          this.loadStatusLoadedTask == "READY"
+        ) {
+          this.$router.push({
+            name: "task",
+            params: {
+              course: course,
+              task: task,
+            },
+          });
+        }
+      });
+
+      if (folder != null) {
+        this.$store.dispatch("getFiles", { course, task, folder }).then(() => {
+          if (
+            this.loadStatusLoadedCourse == "READY" &&
+            this.loadStatusLoadedTask == "READY"
+          ) {
+            this.$router.push({
+              name: "task",
+              params: {
+                course: course,
+                task: task,
+              },
+            });
+          }
+        });
+      }
     },
   },
 };
@@ -16,7 +85,7 @@ export default {
     <!-- Новое задание -->
     <div
       v-if="notification.type.title == 'Новое задание'"
-      class="modal"
+      class="modal fade"
       :id="'notification-' + notification.id"
       data-bs-keyboard="false"
       data-bs-backdrop="static"
@@ -39,19 +108,27 @@ export default {
           <div class="modal-body pt-0 border-0 text-light fw-normal">
             <nav aria-label="breadcrumb">
               <ol class="breadcrumb">
-                <li class="breadcrumb-item" data-bs-dismiss="modal">
-                  <router-link
-                    :to="'/courses/' + notification.course.id"
-                    class="text-decoration-none"
-                    >Курс</router-link
-                  >
+                <li
+                  class="breadcrumb-item text-decoration-none cursor-pointer"
+                  data-bs-dismiss="modal"
+                  @click.prevent="toCourse(notification.course.id)"
+                >
+                  Курс
                 </li>
-                <li class="breadcrumb-item points-1" data-bs-dismiss="modal">
-                  <router-link
-                    :to="'/courses/' + notification.course.id"
-                    class="text-decoration-none"
-                    >Задание</router-link
-                  >
+                <li
+                  class="breadcrumb-item points-1 text-decoration-none cursor-pointer"
+                  data-bs-dismiss="modal"
+                  @click.prevent="
+                    toTask(
+                      notification.course.id,
+                      notification.task.id,
+                      notification.task.folders != ''
+                        ? notification.task.folders[0].id
+                        : null
+                    )
+                  "
+                >
+                  Задание
                 </li>
               </ol>
             </nav>

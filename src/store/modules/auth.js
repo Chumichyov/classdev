@@ -58,9 +58,27 @@ export default (api, router) => {
         }
 
         ctx.commit("setCourses", []);
+        ctx.commit("setLoadedCourse", []);
         ctx.commit("setNotifications", []);
         ctx.commit("setPagination", []);
         ctx.commit("setNotificationSearch", "");
+        ctx.commit("setNotificationsDefault", "");
+        ctx.commit("setBelonging", "");
+        ctx.commit("setLoadedTask", "");
+        ctx.commit("setTasks", "");
+        ctx.commit("setLoadedFiles", "");
+        ctx.commit("setLoadedFolders", "");
+        ctx.commit("setAuthUser", "");
+
+        ctx.commit("setLoadStatusLoadedMainFiles", null);
+        ctx.commit("setLoadStatusLoadedFiles", null);
+        ctx.commit("setLoadStatusLoadedTask", null);
+        ctx.commit("setLoadStatusLoadedTasks", null);
+        ctx.commit("setLoadStatusLoadedCourse", null);
+        ctx.commit("setLoadStatusLoadedNotifications", null);
+        ctx.commit("setLoadStatusNotifications", null);
+        ctx.commit("setLoadStatusAuthUser", null);
+        ctx.commit("setLoadStatusCourses", null);
       },
     },
 

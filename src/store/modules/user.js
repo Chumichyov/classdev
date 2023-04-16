@@ -8,6 +8,18 @@ export default (api, LoadingStatuses) => {
       authUser: (state) => {
         return state.authUser;
       },
+
+      isUser: (state) => {
+        return state.authUser;
+      },
+
+      isTeacher: (state, getters) => {
+        return state.authUser.id == getters.loadedCourse.leader_id;
+      },
+
+      isAdmin: (state) => {
+        return state.authUser;
+      },
     },
 
     actions: {
