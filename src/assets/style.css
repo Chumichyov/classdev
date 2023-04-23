@@ -28,6 +28,7 @@
 
 html {
   overflow-y: scroll;
+  overflow-x: hidden;
 }
 
 .main-enter-active,
@@ -37,6 +38,7 @@ html {
 
 ::-webkit-scrollbar {
   width: 5px;
+  height: 5px;
 }
 
 ::-webkit-scrollbar-thumb {
@@ -44,6 +46,19 @@ html {
   border-radius: 2px;
   height: 90px;
 }
+
+.background-primary {
+  background-color: #0d6efd !important;
+}
+
+textarea:active {
+  background-color: #171a1c;
+}
+
+textarea:focus {
+  background-color: #171a1c !important;
+}
+
 
 .breadcrumb > a.active {
   color: #6c757d !important;
@@ -108,6 +123,10 @@ html {
 
 .background-gray-1 {
   background-color: #61615d;
+}
+
+.background-gray-2 {
+  background-color: #383b40;
 }
 
 .border-gray-1 {
@@ -249,6 +268,24 @@ a:hover {
   }
 }
 
+@media (min-width: 992px) {
+  .mw-330 {
+   max-width: 330px;
+  }
+
+  .h-100-992 {
+    height: 100%;
+  }
+
+  
+}
+
+@media (max-width: 992px) {
+  .w-100-992 {
+    width: 100%;
+  }
+}
+
 @media (max-width: 1170px) {
   .mw-500-768 {
     max-width: 767px;
@@ -328,3 +365,82 @@ a:hover {
     width: 30%;
   }
 }
+
+
+pre {
+  background: transparent !important;
+  font-size: 12px !important;
+}
+
+.line-highlight::before {
+  content: none;
+}
+
+.line-highlight::after {
+  content: none;
+}
+
+.marker-green {
+  position: absolute;
+  background: rgba(0, 255, 0, 0.1);
+  z-index: 2;
+}
+
+.marker-red {
+  position: absolute;
+  background: rgba(200, 100, 100, 0.1);
+  z-index: 2;
+}
+
+.marker-yellow {
+  position: absolute;
+  background: rgba(200, 193, 100, 0.1);
+  z-index: 2;
+}
+
+pre[class*="language-"].line-numbers {
+	position: relative;
+	padding-left: 3.8em;
+	counter-reset: linenumber;
+}
+
+pre[class*="language-"].line-numbers > code {
+	position: relative;
+	/* white-space: inherit; */
+}
+
+:not(pre) > code[class*="language-"] {
+  white-space: pre-wrap !important;
+  background: transparent !important;
+}
+
+.line-numbers .line-numbers-rows {
+	position: absolute;
+	pointer-events: none;
+	top: 0;
+	font-size: 100%;
+	left: -50px;
+	width: 3em; /* works for line-numbers below 1000 lines */
+	letter-spacing: -1px;
+	/* border-right: 1px solid #999; */
+
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+
+}
+
+.line-numbers-rows > span {
+  display: block;
+  counter-increment: linenumber;
+}
+
+.line-numbers-rows > span:before {
+  content: counter(linenumber);
+  color: #999;
+  display: block;
+  padding-right: 0.8em;
+  text-align: right;
+}
+

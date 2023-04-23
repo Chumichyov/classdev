@@ -36,11 +36,27 @@ export default {
   >
     <template #content>
       <default-header class="" style="z-index: 100" />
-      <router-view class="" style="" v-slot="{ Component }">
-        <!-- <transition name="fade" mode="out-in"> -->
-        <component :is="Component" />
-        <!-- </transition> -->
-      </router-view>
+      <transition name="slide-fade" mode="out-in">
+        <router-view class="" style="" v-slot="{ Component }">
+          <component :is="Component" />
+        </router-view>
+      </transition>
     </template>
   </preloader-component>
 </template>
+
+<style>
+.slide-fade-enter-active {
+  transition: all 0.3s ease-out;
+}
+
+.slide-fade-leave-active {
+  transition: all 0.1s cubic-bezier(1, 0.5, 0.8, 1);
+}
+
+.slide-fade-enter-from,
+.slide-fade-leave-to {
+  transform: translateX(10px);
+  opacity: 0;
+}
+</style>

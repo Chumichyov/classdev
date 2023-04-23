@@ -1,4 +1,4 @@
-export default (api, LoadingStatuses) => {
+export default (api, router, LoadingStatuses) => {
   return {
     state: {
       belonging: "",
@@ -41,8 +41,20 @@ export default (api, LoadingStatuses) => {
             ctx.commit("setBelonging", res.data.data.belonging);
           })
           .catch((err) => {
-            console.log(err);
             ctx.commit("setLoadStatusLoadedFiles", LoadingStatuses.Error);
+
+            ctx.commit("setError", {
+              message: err.response.statusText,
+              status: err.response.status,
+            });
+
+            if (err.response.status == 401) {
+              ctx.dispatch("logout", true);
+            }
+
+            router.push({
+              name: "error",
+            });
           });
       },
     },

@@ -24,6 +24,12 @@ export default {
   components: {
     ModalComponent,
   },
+
+  methods: {
+    read(notification) {
+      this.$store.dispatch("notificationRead", notification);
+    },
+  },
 };
 </script>
 
@@ -38,7 +44,15 @@ export default {
           {{ notification.type.title }}
         </div>
         <div class="text-light fs-14 mt-2 w-100" :class="'points-' + dotted">
-          {{ notification.message }}
+          <div class="" v-if="notification.type.id == 2">
+            В курсе '{{ notification.course.title }}' появился новый участник:
+            {{ notification.user.name }} {{ notification.user.surname }}
+          </div>
+          <div class="" v-if="notification.type.id == 3">
+            В курсе '{{ notification.course.title }}' выложено новое задание:
+            {{ notification.task.title }}
+          </div>
+          <!-- {{ notification.message }} -->
         </div>
       </div>
       <div class="mt-3 w-100 d-flex align-items-center justify-content-between">
@@ -47,6 +61,7 @@ export default {
         </div>
         <button
           class="btn btn-primary px-2 py-1"
+          @click.prevent="read(notification.id)"
           data-bs-toggle="modal"
           :data-bs-target="'#notification-' + notification.id"
         >

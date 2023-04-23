@@ -4,6 +4,7 @@ export default (api, router, LoadingStatuses) => {
       tasks: [],
 
       loadedTask: "",
+      tasksSearch: "",
 
       loadedFiles: [],
       loadedFolders: [],
@@ -13,6 +14,10 @@ export default (api, router, LoadingStatuses) => {
     },
 
     getters: {
+      tasksSearch: (state) => {
+        return state.tasksSearch;
+      },
+
       tasks: (state) => {
         return state.tasks;
       },
@@ -39,41 +44,54 @@ export default (api, router, LoadingStatuses) => {
     },
 
     actions: {
-      async getTasks(ctx, course) {
-        if (
-          ctx.getters.loadedCourse.id != course ||
-          ctx.getters.loadStatusLoadedTasks != "READY"
-        ) {
-          ctx.commit("setLoadStatusLoadedTasks", LoadingStatuses.Loading);
-          await api.task
-            .indexTasks({
-              course,
-              type: "Date",
-            })
-            .then((res) => {
-              if (res.data.data.tasks.length == 0)
-                ctx.commit("setLoadStatusLoadedTasks", LoadingStatuses.Empty);
-              else
-                ctx.commit("setLoadStatusLoadedTasks", LoadingStatuses.Ready);
-
-              ctx.commit("setTasks", res.data.data.tasks);
-              ctx.commit("setDates", res.data.data.dates);
-            })
-            .catch((err) => {
-              ctx.commit("setLoadStatusLoadedTasks", LoadingStatuses.Error);
-
-              ctx.commit("setError", {
-                message: err.response.data.message,
-                status: err.response.status,
-              });
-
-              if (err.response.status == 401) {
-                ctx.dispatch("logout", true);
-              }
-            });
-        } else {
-          ctx.commit("setLoadStatusLoadedCourse", LoadingStatuses.Ready);
+      async getTasks(
+        ctx,
+        data = {
+          course: "",
+          type: "Date",
+          search: "",
         }
+      ) {
+        // if (
+        //   ctx.getters.loadedCourse.id != data.course ||
+        //   ctx.getters.loadStatusLoadedTasks != "READY"
+        // ) {
+        ctx.commit("setLoadStatusLoadedTasks", LoadingStatuses.Loading);
+        await api.task
+          .indexTasks({
+            course: data.course,
+            type: data.type,
+            search: data.search,
+          })
+          .then((res) => {
+            console.log(res.data.data);
+            if (res.data.data.tasks.length == 0)
+              ctx.commit("setLoadStatusLoadedTasks", LoadingStatuses.Empty);
+            else ctx.commit("setLoadStatusLoadedTasks", LoadingStatuses.Ready);
+
+            ctx.commit("setTasks", res.data.data.tasks);
+            ctx.commit("setDates", res.data.data.dates);
+          })
+          .catch((err) => {
+            console.log(err);
+            ctx.commit("setLoadStatusLoadedTasks", LoadingStatuses.Error);
+
+            ctx.commit("setError", {
+              message: err.response.statusText,
+              status: err.response.status,
+            });
+
+            if (err.response.status == 401) {
+              ctx.dispatch("logout", true);
+            }
+
+            router.push({
+              name: "error",
+            });
+          });
+        // } else {
+        //   ctx.commit("setLoadStatusLoadedCourse", LoadingStatuses.Ready);
+        // }
       },
 
       async getTask(
@@ -125,24 +143,74 @@ export default (api, router, LoadingStatuses) => {
               ctx.commit("setLoadStatusLoadedMainFiles", LoadingStatuses.Error);
 
               ctx.commit("setError", {
-                message: err.response.data.message,
+                message: err.response.statusText,
                 status: err.response.status,
               });
 
               if (err.response.status == 401) {
                 ctx.dispatch("logout", true);
               }
+
+              router.push({
+                name: "error",
+              });
             });
         } else {
           ctx.commit("setLoadStatusLoadedCourse", LoadingStatuses.Ready);
           ctx.commit("setLoadStatusLoadedMainFiles", LoadingStatuses.Ready);
         }
       },
+
+      async storeTask(
+        ctx,
+        data = {
+          title: "",
+          course: "",
+          type: "",
+          description: "",
+        }
+      ) {
+        // ctx.commit("setLoadStatusCreateTask", LoadingStatuses.Loading);
+        await api.task
+          .storeTask({
+            title: data.title,
+            course: data.course,
+            type: data.type,
+            description: data.description != "" ? data.description : "",
+          })
+          .then(() => {
+            // if (res.data.data.length == 0)
+            //   ctx.commit("setLoadStatusCreateTask", LoadingStatuses.Empty);
+            // else ctx.commit("setLoadStatusCreateTask", LoadingStatuses.Ready);
+          })
+          .catch((err) => {
+            ctx.commit("setError", {
+              message: err.response.statusText,
+              status: err.response.status,
+            });
+
+            if (err.response.status == 401) {
+              ctx.dispatch("logout", true);
+            }
+
+            router.push({
+              name: "error",
+            });
+          });
+      },
     },
 
     mutations: {
       setTasks(state, tasks) {
         state.tasks = tasks;
+      },
+
+      pushTasks(state, task) {
+        state.tasks.push(task);
+      },
+
+      setTasksSearch(state, tasksSearch) {
+        state.tasksSearch = tasksSearch;
       },
 
       setMainFolder(state, mainFolder) {

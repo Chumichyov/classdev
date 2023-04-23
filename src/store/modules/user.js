@@ -1,4 +1,4 @@
-export default (api, LoadingStatuses) => {
+export default (api, router, LoadingStatuses) => {
   return {
     state: {
       authUser: [],
@@ -6,10 +6,6 @@ export default (api, LoadingStatuses) => {
 
     getters: {
       authUser: (state) => {
-        return state.authUser;
-      },
-
-      isUser: (state) => {
         return state.authUser;
       },
 

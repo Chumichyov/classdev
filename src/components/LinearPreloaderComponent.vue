@@ -18,7 +18,7 @@ export default {
 
 <template>
   <div
-    class="linear-loader blue position-absolute top-0 start-0 end-0"
+    class="linear-loader blue position-absolute bottom-0 start-0 end-0"
     v-if="(this.load_2 && this.load_2 === 'LOADING') || this.load === 'LOADING'"
   >
     <div class=""></div>

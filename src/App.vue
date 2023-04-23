@@ -1,11 +1,11 @@
 <template>
   <div class="">
     <component :is="layout">
-      <!-- <transition name="fade" mode="out-in"> -->
-      <router-view v-slot="{ Component }">
-        <component :is="Component" />
-      </router-view>
-      <!-- </transition> -->
+      <transition name="fade" mode="out-in">
+        <router-view v-slot="{ Component }">
+          <component :is="Component" />
+        </router-view>
+      </transition>
     </component>
   </div>
 </template>

@@ -8,7 +8,9 @@
       "
       name="loading"
     >
-      <PreloaderView />
+      <transition name="fade" mode="out-in">
+        <PreloaderView />
+      </transition>
     </slot>
 
     <slot

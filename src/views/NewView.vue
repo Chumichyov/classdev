@@ -99,7 +99,18 @@ export default {
               :error="v$.course.group.$errors"
             ></input-component>
           </div>
-          <input-component
+          <div class="d-flex align-items-center mb-2">
+            <div class="text-light">Описание</div>
+            <div class="text-gray-1 ms-2">(Необязательно)</div>
+          </div>
+          <textarea
+            class="p-2 text-light w-100 background-dark-1 rounded form-control border-gray-1"
+            v-model="course.description"
+            type="text"
+            name="name"
+            :error="v$.course.description.$errors"
+          ></textarea>
+          <!-- <input-component
             class="pt-3"
             :label="'Описание'"
             v-model="course.description"
@@ -107,7 +118,7 @@ export default {
             type="text"
             name="name"
             :error="v$.course.description.$errors"
-          ></input-component>
+          ></input-component> -->
         </div>
         <button type="submit" class="btn btn-primary mt-4">Создать</button>
       </form>

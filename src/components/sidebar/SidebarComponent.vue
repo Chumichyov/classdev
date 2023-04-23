@@ -20,8 +20,7 @@ export default {
 
 <template>
   <div
-    class="sidebar background-dark-2 main-px w-100 pt-4 pb-4 h-100"
-    style="max-width: 330px"
+    class="sidebar w-100 background-dark-2 main-px w-100 pt-4 pb-4 h-100-992 mw-330"
   >
     <component :is="sidebar">
       <router-view></router-view>

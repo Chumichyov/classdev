@@ -4,7 +4,7 @@ import PaginationComponent from "@/components/pagination/PaginationComponent.vue
 import SidebarComponent from "@/components/sidebar/SidebarComponent.vue";
 import InputComponent from "@/components/InputComponent.vue";
 import NotificationBlockComponent from "@/components/notification/NotificationBlockComponent.vue";
-import LinearPreloaderComponent from "@/components/LinearPreloaderComponent.vue";
+// import LinearPreloaderComponent from "@/components/LinearPreloaderComponent.vue";
 
 export default {
   name: "NotificationsView",
@@ -62,16 +62,16 @@ export default {
     SidebarComponent,
     InputComponent,
     NotificationBlockComponent,
-    LinearPreloaderComponent,
+    // LinearPreloaderComponent,
   },
 };
 </script>
 
 <template>
   <div class="d-flex align-items-start justify-content-start position-relative">
-    <linear-preloader-component
+    <!-- <linear-preloader-component
       :load="loadStatusLoadedNotifications"
-    ></linear-preloader-component>
+    ></linear-preloader-component> -->
 
     <sidebar-component></sidebar-component>
 
@@ -120,36 +120,36 @@ export default {
             ></input-component>
           </form>
         </div>
-        <div class>
-          <transition-group name="main">
-            <div class style="min-height: 884px">
+        <div v-if="notifications != ''">
+          <div style="min-height: 884px">
+            <div
+              class="pt-4 d-flex flex-wrap align-items-center justify-content-center justify-content-md-between"
+            >
               <div
-                class="pt-4 d-flex flex-wrap align-items-center justify-content-center justify-content-md-between"
+                v-for="notification in notifications"
+                :key="notification.id"
+                class="w-100 mw-500-768 d-flex"
               >
-                <div
-                  v-for="notification in notifications"
-                  :key="notification.id"
-                  class="w-100 mw-500-768 d-flex"
-                >
-                  <notification-block-component
-                    :notification="notification"
-                    :dotted="2"
-                    :modal="true"
-                  ></notification-block-component>
-                </div>
+                <notification-block-component
+                  :notification="notification"
+                  :dotted="2"
+                  :modal="true"
+                ></notification-block-component>
               </div>
             </div>
-            <pagination-component
-              :action="'notifications'"
-            ></pagination-component>
-          </transition-group>
+          </div>
+          <pagination-component
+            :action="'notifications'"
+          ></pagination-component>
         </div>
-      </div>
-      <div
-        v-if="loadStatusLoadedNotifications === 'EMPTY'"
-        class="main-px mw-768 w-100 mt-5 fs-2 text-gray-1 text-center"
-      >
-        Упс... Похоже здесь нет уведомлений
+        <div
+          v-if="
+            loadStatusLoadedNotifications === 'EMPTY' || notifications == ''
+          "
+          class="main-px mw-768 w-100 mt-5 fs-2 text-gray-1 text-center"
+        >
+          Упс... Похоже здесь нет уведомлений
+        </div>
       </div>
     </div>
   </div>

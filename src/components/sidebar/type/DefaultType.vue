@@ -1,12 +1,12 @@
 <script>
 import InputComponent from "../../InputComponent.vue";
-import { mapGetters } from "vuex";
+import { mapGetters, mapMutations } from "vuex";
 
 export default {
   name: "DefaultType",
 
   data: () => ({
-    query: "",
+    search: "",
   }),
 
   computed: {
@@ -20,23 +20,44 @@ export default {
   methods: {
     toCourse(course) {
       this.$store.dispatch("getCourse", course);
-      this.$store.dispatch("getTasks", course).then(() => {
-        if (
-          this.loadStatusLoadedCourse == "READY" &&
-          (this.loadStatusLoadedTasks == "READY" ||
-            this.loadStatusLoadedTasks == "EMPTY")
-        ) {
-          this.$router.push({
-            name: "course",
-            params: {
-              course: course,
-            },
-            query: {
-              q: "Task",
-            },
-          });
-        }
-      });
+      this.$store
+        .dispatch("getTasks", {
+          course: course,
+          type: "Date",
+          search: "",
+        })
+        .then(() => {
+          if (
+            this.loadStatusLoadedCourse == "READY" &&
+            (this.loadStatusLoadedTasks == "READY" ||
+              this.loadStatusLoadedTasks == "EMPTY")
+          ) {
+            this.$router.push({
+              name: "course.tasks",
+              params: {
+                course: course,
+              },
+            });
+          }
+        });
+    },
+
+    ...mapMutations(["setCoursesSearch"]),
+
+    newCourses() {
+      let route = "";
+
+      if (this.search !== "") {
+        route = `/main?search=${this.search}`;
+      } else {
+        route = `/main`;
+      }
+
+      this.$router.push(route);
+
+      this.setCoursesSearch(this.search);
+
+      this.$store.dispatch("indexCoursesSearch");
     },
   },
 
@@ -47,16 +68,26 @@ export default {
 </script>
 
 <template>
-  <div class="h-100">
+  <div class="h-100-992">
     <div class="mb-4">
       <div class="d-flex align-items-center justify-content-between text-light">
         <div class="">Курсы</div>
-        <router-link to="/new" class="btn btn-primary px-2 py-1"
-          >Создать</router-link
+        <button
+          type="button"
+          class="btn btn-primary px-2 py-1"
+          data-bs-toggle="modal"
+          data-bs-target="#newCourse"
         >
+          Создать
+        </button>
       </div>
       <form action="" class="mt-3">
-        <input-component type="text" name="search" v-model="query" />
+        <input-component
+          v-on:input="newCourses"
+          type="text"
+          name="search"
+          v-model="search"
+        />
       </form>
     </div>
     <div class="" v-for="(course, index) in courses" :key="course.id">
@@ -79,6 +110,9 @@ export default {
           </span>
         </div>
       </div>
+    </div>
+    <div class="text-gray-1 w-100 text-center" v-if="courses == ''">
+      Курсов не найдено
     </div>
   </div>
 </template>

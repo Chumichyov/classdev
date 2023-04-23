@@ -4,8 +4,12 @@ import { mapGetters } from "vuex";
 export default {
   name: "HttpCodeError",
 
+  data: () => ({
+    httpError: "",
+  }),
+
   mounted() {
-    console.log(this.error);
+    this.httpError = this.error;
   },
 
   computed: {
@@ -20,14 +24,14 @@ export default {
   >
     <div class="">
       <div class="fw-900 text-light text-center" style="font-size: 60px">
-        {{ error.status }}
+        {{ httpError.status }}
       </div>
       <div class="fs-5 fw-900 text-light text-center">
-        {{ error.message }}
+        {{ httpError.message }}
       </div>
     </div>
     <div class="mt-4">
-      <router-link class="btn btn-primary" v-if="error.status != 401" to="/"
+      <router-link class="btn btn-primary" v-if="httpError.status != 401" to="/"
         >Главная</router-link
       >
       <router-link class="btn btn-primary" v-else to="/login"

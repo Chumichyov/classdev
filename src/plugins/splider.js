@@ -12,7 +12,6 @@ export default {
           flickPower: 300,
           snap: true,
         };
-
         return options;
       },
     };

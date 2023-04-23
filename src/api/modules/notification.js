@@ -7,5 +7,12 @@ export default function (instance) {
     notificationsDefault(payload) {
       return instance.post("notifications/default", payload);
     },
+
+    read(payload) {
+      return instance.patch(
+        `notifications/${payload.notification}/read`,
+        payload
+      );
+    },
   };
 }

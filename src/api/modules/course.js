@@ -1,7 +1,7 @@
 export default function (instance) {
   return {
     indexCourses(payload) {
-      return instance.get("courses", payload);
+      return instance.post("courses", payload);
     },
 
     getCourse(course) {
@@ -9,7 +9,30 @@ export default function (instance) {
     },
 
     storeCourses(payload) {
-      return instance.post("courses", payload);
+      return instance.post("courses/store", payload);
+    },
+
+    destroyCourse(payload) {
+      return instance.delete(`courses/${payload.course}`, payload);
+    },
+
+    updateCourse(payload) {
+      return instance.patch(`courses/${payload.course}`, payload);
+    },
+
+    updateCode(payload) {
+      return instance.patch(`courses/${payload.course}/settings/code`, payload);
+    },
+
+    updateLink(payload) {
+      return instance.patch(`courses/${payload.course}/settings/link`, payload);
+    },
+
+    expelUser(payload) {
+      return instance.delete(
+        `courses/${payload.course}/users/${payload.user}/expel`,
+        payload
+      );
     },
   };
 }
