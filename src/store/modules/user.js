@@ -33,13 +33,19 @@ export default (api, router, LoadingStatuses) => {
           .catch((err) => {
             ctx.commit("setLoadStatusAuthUser", LoadingStatuses.Error);
 
-            ctx.commit("setError", {
-              message: err.response.data.message,
-              status: err.response.status,
-            });
+            if (ctx.getters.error.status != err.response.status) {
+              ctx.commit("setError", {
+                message: err.response.statusText,
+                status: err.response.status,
+              });
+            }
 
-            if (err.response.status == 401) {
-              ctx.dispatch("logout", true);
+            if (
+              err.response.status == 401 &&
+              ctx.getters.error.get401 != true
+            ) {
+              ctx.getters.error.get401 = true;
+              ctx.dispatch("logout", false);
             }
           });
       },

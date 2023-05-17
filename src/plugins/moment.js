@@ -6,7 +6,10 @@ export default {
   install(App) {
     App.config.globalProperties.$moment = {
       getDate(date) {
-        return moment(date).format("L");
+        return moment(date).format("LL");
+      },
+      getDateTime(date) {
+        return moment(date).format("LLL");
       },
     };
   },

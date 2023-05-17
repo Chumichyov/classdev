@@ -54,6 +54,7 @@ export default {
       :placeholder="modelValue"
       @input="$emit('update:modelValue', $event.target.value)"
     />
+
     <div class="" style="min-height: 21px" v-if="error">
       <div class="form-error" v-for="element of error" :key="element.$uid">
         <div

@@ -1,7 +1,7 @@
 <script>
 import { mapGetters, mapMutations } from "vuex";
-import NewTaskModalComponent from "@/components/modal/NewTaskModalComponent.vue";
 import NewMaterialModalComponentVue from "@/components/modal/NewMaterialModalComponent.vue";
+import NewTaskModalComponent from "@/components/modal/NewTaskModalComponent.vue";
 // import LinearPreloaderComponent from "@/components/LinearPreloaderComponent.vue";
 import InputComponent from "@/components/InputComponent.vue";
 import Popper from "vue3-popper";
@@ -106,28 +106,36 @@ export default {
     },
 
     toTask(task, folder = null) {
+      if (!this.loadedTask || this.loadedTask.id != task) {
+        this.$store.dispatch("getTask", {
+          course: this.$route.params.course,
+          task: task,
+        });
+      }
+
+      this.$store.dispatch("getAuthDecision", {
+        course: this.$route.params.course,
+        task: task,
+      });
+
       this.$store
-        .dispatch("getTask", {
+        .dispatch("getMainFiles", {
           course: this.$route.params.course,
           task: task,
         })
         .then(() => {
-          if (folder == null) {
-            if (this.loadStatusLoadedTask == "READY") {
-              this.$router.push({
-                name: "task",
-                params: {
-                  course: this.loadedCourse.id,
-                  task: task,
-                },
-              });
-            }
-          }
+          this.$router.push({
+            name: "task",
+            params: {
+              course: this.loadedCourse.id,
+              task: task,
+            },
+          });
         });
 
       if (folder != null) {
         this.$store
-          .dispatch("getFiles", {
+          .dispatch("getTaskFiles", {
             course: this.$route.params.course,
             task: task,
             folder: folder,
@@ -142,7 +150,10 @@ export default {
               //     folder: folder,
               //   },
               // });
-              if (this.loadStatusLoadedTask == "READY") {
+              if (
+                this.loadStatusLoadedTask == "READY" &&
+                this.loadStatusLoadedDecision == "READY"
+              ) {
                 this.$router.push({
                   name: "task",
                   params: {

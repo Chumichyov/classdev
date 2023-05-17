@@ -46,11 +46,23 @@ export default {
         <div class="text-light fs-14 mt-2 w-100" :class="'points-' + dotted">
           <div class="" v-if="notification.type.id == 2">
             В курсе '{{ notification.course.title }}' появился новый участник:
-            {{ notification.user.name }} {{ notification.user.surname }}
+            <span class="text-primary"
+              >{{ notification.user.name }}
+              {{ notification.user.surname }}</span
+            >
           </div>
           <div class="" v-if="notification.type.id == 3">
             В курсе '{{ notification.course.title }}' выложено новое задание:
             {{ notification.task.title }}
+          </div>
+          <div class="" v-if="notification.type.id == 4">
+            В курсе '{{ notification.course.title }}' пользователь
+            <span class="text-primary">
+              {{
+                notification.user.name + " " + notification.user.surname
+              }}</span
+            >
+            сдал решение к заданию '{{ notification.task.title }}'
           </div>
           <!-- {{ notification.message }} -->
         </div>

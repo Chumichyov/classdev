@@ -36,9 +36,12 @@ export default {
             </div>
           </div>
         </div>
-        <div class="border border-gray-2 rounded mt-3">
+        <div
+          class="border border-gray-2 rounded mt-3"
+          v-if="loadedCourse.members && loadedCourse.members[1] != undefined"
+        >
           <div class="fs-5 pt-2 px-3">Участники</div>
-          <div class="py-2 pb-2">
+          <div class="py-2">
             <div
               class="w-100"
               v-for="member in loadedCourse.members"

@@ -6,6 +6,7 @@ import userModule from "./modules/user";
 import taskModule from "./modules/task";
 import folderModule from "./modules/folder";
 import fileModule from "./modules/file";
+import decisionModule from "./modules/decision";
 
 export default {
   auth: authModule(instance),
@@ -15,4 +16,5 @@ export default {
   task: taskModule(instance),
   folder: folderModule(instance),
   file: fileModule(instance),
+  decision: decisionModule(instance),
 };

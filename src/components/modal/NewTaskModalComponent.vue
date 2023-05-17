@@ -5,7 +5,7 @@ import { helpers, required, minLength, maxLength } from "@vuelidate/validators";
 import InputComponent from "@/components/InputComponent.vue";
 
 export default {
-  name: "ModalComponent",
+  name: "NewTaskModalComponent",
 
   data: () => ({
     v$: useVuelidate(),
@@ -69,13 +69,6 @@ export default {
             minLength(4)
           ),
         },
-
-        description: {
-          minLength: helpers.withMessage(
-            "Минимальная длина: 2 символов",
-            minLength(2)
-          ),
-        },
       },
     };
   },
@@ -122,7 +115,6 @@ export default {
                 v-model="task.description"
                 type="text"
                 name="name"
-                :error="v$.task.description.$errors"
               ></textarea>
             </div>
           </div>

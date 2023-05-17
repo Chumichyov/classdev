@@ -35,7 +35,7 @@ export default {
     class="position-absolute top-0 bottom-0 start-0 end-0 main-grid"
   >
     <template #content>
-      <default-header class="" style="z-index: 100" />
+      <default-header />
       <transition name="slide-fade" mode="out-in">
         <router-view class="" style="" v-slot="{ Component }">
           <component :is="Component" />

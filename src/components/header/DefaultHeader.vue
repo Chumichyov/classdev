@@ -26,6 +26,8 @@ export default {
       "loadStatusLoadedFile",
       "loadStatusLoadedMainFiles",
       "loadStatusLoadedNotifications",
+      "loadStatusUpdateCourse",
+      "loadStatusUpdateTask",
     ]),
   },
 
@@ -200,6 +202,14 @@ export default {
 
     <linear-preloader-component
       :load="loadStatusLoadedCourse"
+    ></linear-preloader-component>
+
+    <linear-preloader-component
+      :load="loadStatusUpdateTask"
+    ></linear-preloader-component>
+
+    <linear-preloader-component
+      :load="loadStatusUpdateCourse"
     ></linear-preloader-component>
 
     <linear-preloader-component

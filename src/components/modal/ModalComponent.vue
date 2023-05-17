@@ -50,44 +50,92 @@ export default {
         });
     },
 
+    toDecision(decision) {
+      this.$store
+        .dispatch("showDecision", {
+          course: this.$route.params.course,
+          task: this.$route.params.task,
+          decision: decision,
+        })
+        .then(() => {
+          this.$router.push({
+            name: "decision",
+            params: {
+              course: this.$route.params.course,
+              task: this.$route.params.task,
+              decision: decision,
+            },
+          });
+        });
+    },
+
     toTask(course, task, folder = null) {
       this.$store.dispatch("getCourse", course);
+
+      this.$store.dispatch("getTasks", {
+        course: course,
+        type: "Date",
+        search: "",
+      });
+
+      if (!this.loadedTask || this.loadedTask.id != task) {
+        this.$store.dispatch("getTask", {
+          course: course,
+          task: task,
+        });
+      }
+
+      this.$store.dispatch("getAuthDecision", {
+        course: course,
+        task: task,
+      });
+
       this.$store
-        .dispatch("getTask", {
+        .dispatch("getMainFiles", {
           course: course,
           task: task,
         })
         .then(() => {
-          if (
-            folder == null &&
-            this.loadStatusLoadedCourse == "READY" &&
-            this.loadStatusLoadedTask == "READY"
-          ) {
-            this.$router.push({
-              name: "task",
-              params: {
-                course: course,
-                task: task,
-              },
-            });
-          }
+          this.$router.push({
+            name: "task",
+            params: {
+              course: course,
+              task: task,
+            },
+          });
         });
 
       if (folder != null) {
-        this.$store.dispatch("getFiles", { course, task, folder }).then(() => {
-          if (
-            this.loadStatusLoadedCourse == "READY" &&
-            this.loadStatusLoadedTask == "READY"
-          ) {
-            this.$router.push({
-              name: "task",
-              params: {
-                course: course,
-                task: task,
-              },
-            });
-          }
-        });
+        this.$store
+          .dispatch("getTaskFiles", {
+            course: course,
+            task: task,
+            folder: folder,
+          })
+          .then(() => {
+            if (this.loadStatusLoadedFiles == "READY") {
+              // this.$router.push({
+              //   name: "folder",
+              //   params: {
+              //     course: this.loadedCourse.id,
+              //     task: task,
+              //     folder: folder,
+              //   },
+              // });
+              if (
+                this.loadStatusLoadedTask == "READY" &&
+                this.loadStatusLoadedDecision == "READY"
+              ) {
+                this.$router.push({
+                  name: "task",
+                  params: {
+                    course: course,
+                    task: task,
+                  },
+                });
+              }
+            }
+          });
       }
     },
   },
@@ -120,7 +168,7 @@ export default {
         </div>
         <div class="modal-body py-0 border-0 text-light fw-normal">
           <nav aria-label="breadcrumb background-primary rounded">
-            <ol class="breadcrumb background-primary px-3 py-2 rounded">
+            <ol class="breadcrumb background-primary px-3 py-1 rounded">
               <li
                 class="breadcrumb-item text-decoration-none cursor-pointer text-light"
                 data-bs-dismiss="modal"
@@ -150,7 +198,7 @@ export default {
           </div>
           <div class="points-3 mb-3">
             В курсе '{{ notification.course.title }}' выложено новое задание:
-            {{ notification.task.title }}
+            <span class="text-primary">{{ notification.task.title }} </span>
           </div>
           <div
             class="bg-primary px-3 py-2 rounded d-flex align-items-center"
@@ -184,11 +232,104 @@ export default {
             </div> -->
         </div>
         <div
-          class="modal-footer border-0 d-flex align-items-center justify-content-end"
+          class="modal-footer border-0 d-flex align-items-center justify-content-end m-0"
         >
           <button
             type="button"
-            class="btn btn-secondary"
+            class="btn btn-secondary m-0"
+            data-bs-dismiss="modal"
+          >
+            Закрыть
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Новое решение -->
+  <div
+    v-if="notification && notification.type.id == 4"
+    class="modal fade"
+    :id="'notification-' + notification.id"
+    data-bs-keyboard="false"
+    data-bs-backdrop="static"
+    tabindex="-1"
+    aria-hidden="true"
+  >
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content background-dark-1">
+        <div class="modal-header border-0">
+          <h5 class="modal-title text-light">
+            {{ notification.type.title }}
+          </h5>
+          <button
+            type="button"
+            class="btn-close btn-close-white"
+            data-bs-dismiss="modal"
+            aria-label="Close"
+          ></button>
+        </div>
+        <div class="modal-body py-0 border-0 text-light fw-normal">
+          <nav aria-label="breadcrumb background-primary rounded">
+            <ol class="breadcrumb background-primary px-3 py-1 rounded">
+              <li
+                class="breadcrumb-item text-decoration-none cursor-pointer text-light"
+                data-bs-dismiss="modal"
+                @click.prevent="toCourse(notification.course.id)"
+              >
+                Курс
+              </li>
+              <li
+                class="breadcrumb-item points-1 text-decoration-none cursor-pointer text-light"
+                data-bs-dismiss="modal"
+                @click.prevent="
+                  toTask(
+                    notification.course.id,
+                    notification.task.id,
+                    notification.task.folders != ''
+                      ? notification.task.folders[0].id
+                      : null
+                  )
+                "
+              >
+                Задание
+              </li>
+              <!-- <li
+                class="breadcrumb-item points-1 text-decoration-none cursor-pointer text-light"
+                data-bs-dismiss="modal"
+                @click.prevent="
+                  toDecision(
+                    notification.course.id,
+                    notification.task.id,
+                    notification.task.folders != ''
+                      ? notification.task.folders[0].id
+                      : null
+                  )
+                "
+              >
+                Решение
+              </li> -->
+            </ol>
+          </nav>
+          <div class="mb-2 fs-18">
+            {{ notification.task.title }}
+          </div>
+          <div class="points-3 mb-3">
+            В курсе '{{ notification.course.title }}' пользователь
+            <span class="text-primary">
+              {{
+                notification.user.name + " " + notification.user.surname
+              }}</span
+            >
+            сдал решение к заданию '{{ notification.task.title }}'
+          </div>
+        </div>
+        <div
+          class="modal-footer border-0 d-flex align-items-center justify-content-end m-0"
+        >
+          <button
+            type="button"
+            class="btn btn-secondary m-0"
             data-bs-dismiss="modal"
           >
             Закрыть
@@ -223,7 +364,7 @@ export default {
         </div>
         <div class="modal-body py-0 border-0 text-light fw-normal">
           <nav aria-label="breadcrumb background-primary rounded">
-            <ol class="breadcrumb background-primary py-2 px-3 rounded">
+            <ol class="breadcrumb background-primary py-1 px-3 rounded">
               <li
                 class="breadcrumb-item text-decoration-none cursor-pointer text-light"
                 data-bs-dismiss="modal"
@@ -238,15 +379,18 @@ export default {
           </div>
           <div class="points-3">
             В курсе '{{ notification.course.title }}' появился новый участник:
-            {{ notification.user.name }} {{ notification.user.surname }}
+            <span class="text-primary"
+              >{{ notification.user.name }}
+              {{ notification.user.surname }}</span
+            >
           </div>
         </div>
         <div
-          class="modal-footer border-0 d-flex align-items-center justify-content-end"
+          class="modal-footer border-0 d-flex align-items-center justify-content-end m-0"
         >
           <button
             type="button"
-            class="btn btn-secondary"
+            class="btn btn-secondary m-0"
             data-bs-dismiss="modal"
           >
             Закрыть

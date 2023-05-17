@@ -10,19 +10,26 @@ import userModule from "./modules/user";
 import taskModule from "./modules/task";
 import folderModule from "./modules/folder";
 import fileModule from "./modules/file";
+import decisionModule from "./modules/decision";
 
 export default createStore({
   state: {
     error: {
-      message: "Страница не найдена",
+      message: "Похоже что страница, которую вы искали не найдена",
       status: "404",
+      get401: false,
     },
 
     loadStatusAuthUser: null,
     loadStatusCourses: null,
     loadStatusNotifications: null,
 
+    loadStatusUpdateDecision: null,
+    loadStatusUpdateTask: null,
+    loadStatusUpdateFolder: null,
+    loadStatusUpdateFile: null,
     loadStatusLoadedCourse: null,
+    loadStatusUpdateCourse: null,
     loadStatusCreateCourse: null,
     loadStatusLoadedCourses: null,
     loadStatusLoadedTasks: null,
@@ -32,10 +39,45 @@ export default createStore({
     loadStatusLoadedFile: null,
     loadStatusLoadedMainFiles: null,
     loadStatusLoadedNotifications: null,
+    loadStatusLoadedDecision: null,
+    loadStatusLoadedDecisionFiles: null,
+    loadStatusStoreFile: null,
   },
   getters: {
     loadStatusCourses: (state) => {
       return state.loadStatusCourses;
+    },
+
+    loadStatusUpdateDecision: (state) => {
+      return state.loadStatusUpdateDecision;
+    },
+
+    loadStatusStoreFile: (state) => {
+      return state.loadStatusStoreFile;
+    },
+
+    loadStatusLoadedDecisionFiles: (state) => {
+      return state.loadStatusLoadedDecisionFiles;
+    },
+
+    loadStatusLoadedDecision: (state) => {
+      return state.loadStatusLoadedDecision;
+    },
+
+    loadStatusUpdateCourse: (state) => {
+      return state.loadStatusUpdateCourse;
+    },
+
+    loadStatusUpdateFile: (state) => {
+      return state.loadStatusUpdateFile;
+    },
+
+    loadStatusUpdateFolder: (state) => {
+      return state.loadStatusUpdateFolder;
+    },
+
+    loadStatusUpdateTask: (state) => {
+      return state.loadStatusUpdateTask;
     },
 
     loadStatusCreateCourse: (state) => {
@@ -96,6 +138,18 @@ export default createStore({
       state.loadStatusCourses = loadStatusCourses;
     },
 
+    setLoadStatusUpdateTask(state, loadStatusUpdateTask) {
+      state.loadStatusUpdateTask = loadStatusUpdateTask;
+    },
+
+    setLoadStatusUpdateFile(state, loadStatusUpdateFile) {
+      state.loadStatusUpdateFile = loadStatusUpdateFile;
+    },
+
+    setLoadStatusUpdateCourse(state, loadStatusUpdateCourse) {
+      state.loadStatusUpdateCourse = loadStatusUpdateCourse;
+    },
+
     setLoadStatusCreateCourse(state, loadStatusCreateCourse) {
       state.loadStatusCreateCourse = loadStatusCreateCourse;
     },
@@ -144,6 +198,26 @@ export default createStore({
       state.loadStatusLoadedMainFiles = loadStatusLoadedMainFiles;
     },
 
+    setLoadStatusUpdateFolder(state, loadStatusUpdateFolder) {
+      state.loadStatusUpdateFolder = loadStatusUpdateFolder;
+    },
+
+    setLoadStatusLoadedDecision(state, loadStatusLoadedDecision) {
+      state.loadStatusLoadedDecision = loadStatusLoadedDecision;
+    },
+
+    setLoadStatusUpdateDecision(state, loadStatusUpdateDecision) {
+      state.loadStatusUpdateDecision = loadStatusUpdateDecision;
+    },
+
+    setLoadStatusLoadedDecisionFiles(state, loadStatusLoadedDecisionFiles) {
+      state.loadStatusLoadedDecisionFiles = loadStatusLoadedDecisionFiles;
+    },
+
+    setLoadStatusStoreFile(state, loadStatusStoreFile) {
+      state.loadStatusStoreFile = loadStatusStoreFile;
+    },
+
     setError(state, error) {
       state.error = error;
     },
@@ -157,5 +231,6 @@ export default createStore({
     task: taskModule(api, router, LoadingStatuses),
     folder: folderModule(api, router, LoadingStatuses),
     file: fileModule(api, router, LoadingStatuses),
+    decision: decisionModule(api, router, LoadingStatuses),
   },
 });

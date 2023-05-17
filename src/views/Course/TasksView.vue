@@ -1,7 +1,5 @@
 <script>
 import { mapGetters, mapMutations } from "vuex";
-import NewTaskModalComponent from "@/components/modal/NewTaskModalComponent.vue";
-import NewMaterialModalComponentVue from "@/components/modal/NewMaterialModalComponent.vue";
 import InputComponent from "@/components/InputComponent.vue";
 import Popper from "vue3-popper";
 
@@ -43,7 +41,9 @@ export default {
   computed: {
     ...mapGetters([
       "loadedCourse",
+      "createdTask",
       "authUser",
+      "loadedTask",
       "loadStatusLoadedCourse",
       "loadStatusLoadedTasks",
       "loadStatusLoadedTask",
@@ -55,6 +55,7 @@ export default {
       "loadedFolders",
       "tasksSearch",
       "loadStatusCreateTask",
+      "loadStatusLoadedDecision",
     ]),
   },
 
@@ -81,29 +82,64 @@ export default {
       });
     },
 
-    toTask(task, folder = null) {
+    toSettings(task) {
+      this.$store.dispatch("getTask", {
+        course: this.$route.params.course,
+        task: task,
+      });
+
+      this.$store.dispatch("getMainFiles", {
+        course: this.$route.params.course,
+        task: task,
+      });
+
       this.$store
-        .dispatch("getTask", {
+        .dispatch("getAuthDecision", {
           course: this.$route.params.course,
           task: task,
         })
         .then(() => {
-          if (folder == null) {
-            if (this.loadStatusLoadedTask == "READY") {
-              this.$router.push({
-                name: "task",
-                params: {
-                  course: this.loadedCourse.id,
-                  task: task,
-                },
-              });
-            }
-          }
+          this.$router.push({
+            name: "task.settings",
+            params: {
+              course: this.$route.params.course,
+              task: task,
+            },
+          });
+        });
+    },
+
+    toTask(task, folder = null) {
+      if (!this.loadedTask || this.loadedTask.id != task) {
+        this.$store.dispatch("getTask", {
+          course: this.$route.params.course,
+          task: task,
+        });
+      }
+
+      this.$store.dispatch("getAuthDecision", {
+        course: this.$route.params.course,
+        task: task,
+      });
+
+      this.$store
+        .dispatch("getMainFiles", {
+          course: this.$route.params.course,
+          task: task,
+        })
+        .then(() => {
+          this.$router.push({
+            name: "task",
+            params: {
+              course: this.loadedCourse.id,
+              task: task,
+            },
+          });
         });
 
       if (folder != null) {
         this.$store
-          .dispatch("getFiles", {
+          .dispatch("getTaskFiles", {
             course: this.$route.params.course,
             task: task,
             folder: folder,
@@ -118,7 +154,10 @@ export default {
               //     folder: folder,
               //   },
               // });
-              if (this.loadStatusLoadedTask == "READY") {
+              if (
+                this.loadStatusLoadedTask == "READY" &&
+                this.loadStatusLoadedDecision == "READY"
+              ) {
                 this.$router.push({
                   name: "task",
                   params: {
@@ -131,22 +170,57 @@ export default {
           });
       }
     },
+
+    storeTask(type) {
+      this.$store
+        .dispatch("storeTask", {
+          course: this.$route.params.course,
+          type: type,
+        })
+        .then(() => {
+          this.$store.dispatch("getAuthDecision", {
+            course: this.$route.params.course,
+            task: this.createdTask.id,
+          });
+
+          this.$store.dispatch("getMainFiles", {
+            course: this.$route.params.course,
+            task: this.createdTask.id,
+          });
+
+          this.$store.dispatch("getTasks", {
+            course: this.$route.params.course,
+            type: "Date",
+            search: "",
+          });
+
+          this.$store
+            .dispatch("getTask", {
+              course: this.$route.params.course,
+              task: this.createdTask.id,
+            })
+            .then(() => {
+              this.$router.push({
+                name: "task.settings",
+                params: {
+                  course: this.loadedCourse.id,
+                  task: this.createdTask.id,
+                },
+              });
+            });
+        });
+    },
   },
 
   components: {
     InputComponent,
     Popper,
-    NewTaskModalComponent,
-    NewMaterialModalComponentVue,
   },
 };
 </script>
 
 <template>
   <div class="pt-4 text-light position-relative">
-    <new-task-modal-component></new-task-modal-component>
-    <new-material-modal-component-vue></new-material-modal-component-vue>
-
     <div class="main-px">
       <div class="d-flex align-items-center justify-content-start">
         <div class="dropdown" v-if="isTeacher">
@@ -177,21 +251,35 @@ export default {
             aria-labelledby="addTask"
           >
             <li>
-              <button
+              <!-- <button
                 class="dropdown-item"
                 type="button"
                 data-bs-toggle="modal"
                 data-bs-target="#newTask"
               >
                 Новое задание
+              </button> -->
+              <button
+                class="dropdown-item"
+                type="button"
+                @click.prevent="storeTask(1)"
+              >
+                Новое задание
               </button>
             </li>
             <li>
-              <button
+              <!-- <button
                 class="dropdown-item"
                 type="button"
                 data-bs-toggle="modal"
                 data-bs-target="#newMaterial"
+              >
+                Новый материал
+              </button> -->
+              <button
+                class="dropdown-item"
+                type="button"
+                @click.prevent="storeTask(2)"
               >
                 Новый материал
               </button>
@@ -250,34 +338,81 @@ export default {
             </div>
             <div class="" v-for="task in tasks" :key="task.id">
               <div
-                class="d-flex align-items-center justify-content-start"
+                class="d-flex align-items-center justify-content-start my-hover"
                 v-if="task.created_at === date"
               >
                 <div
-                  class="d-flex w-100 align-items-center justify-content-between my-hover justify-content-start text-light py-2 px-3"
+                  class="d-flex w-100 align-items-center justify-content-between justify-content-start text-light cursor-pointer"
                 >
-                  <div class="d-flex align-items-center">
-                    <img
+                  <div
+                    @click.prevent="
+                      toTask(
+                        task.id,
+                        task.folders != '' ? task.folders[0].id : null
+                      )
+                    "
+                    class="d-flex align-items-center py-2 ps-3 flex-fill"
+                    :class="
+                      authUser != '' && authUser.id == loadedCourse.leader.id
+                        ? task.is_published == 1
+                          ? 'my-hover'
+                          : 'my-hover-tr'
+                        : ''
+                    "
+                  >
+                    <div
+                      :class="
+                        task.is_published == 1 ? 'text-white' : 'text-gray-1'
+                      "
                       v-if="task.type.id == 1"
-                      src="@/assets/file-earmark-fill.png"
-                      alt=""
-                      style="width: 22px; height: 22px; margin-right: 2px"
-                    />
-                    <img v-else src="@/assets/info-lg.png" alt="" />
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="22"
+                        height="22"
+                        fill="currentColor"
+                        class="bi bi-clipboard-fill"
+                        viewBox="0 0 16 16"
+                      >
+                        <path
+                          fill-rule="evenodd"
+                          d="M10 1.5a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 .5-.5v-1Zm-5 0A1.5 1.5 0 0 1 6.5 0h3A1.5 1.5 0 0 1 11 1.5v1A1.5 1.5 0 0 1 9.5 4h-3A1.5 1.5 0 0 1 5 2.5v-1Zm-2 0h1v1A2.5 2.5 0 0 0 6.5 5h3A2.5 2.5 0 0 0 12 2.5v-1h1a2 2 0 0 1 2 2V14a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V3.5a2 2 0 0 1 2-2Z"
+                        />
+                      </svg>
+                    </div>
+                    <div
+                      :class="
+                        task.is_published == 1 ? 'text-white' : 'text-gray-1'
+                      "
+                      v-else
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="22"
+                        height="22"
+                        fill="currentColor"
+                        class="bi bi-info-square-fill"
+                        viewBox="0 0 16 16"
+                      >
+                        <path
+                          d="M0 2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2zm8.93 4.588-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533L8.93 6.588zM8 5.5a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"
+                        />
+                      </svg>
+                    </div>
 
                     <div
                       class="ms-2 points-1 cursor-pointer"
-                      @click.prevent="
-                        toTask(
-                          task.id,
-                          task.folders != '' ? task.folders[0].id : null
-                        )
+                      :class="
+                        task.is_published == 1 ? 'text-white' : 'text-gray-1'
                       "
                     >
                       {{ task.title }}
                     </div>
                   </div>
-                  <div class="" v-if="task.is_completed == false">
+                  <div
+                    class="d-flex align-items-center px-3"
+                    v-if="task.is_completed == 1"
+                  >
                     <Popper>
                       <div
                         class="rounded-circle bg-primary cursor-pointer"
@@ -291,15 +426,22 @@ export default {
                     </Popper>
                   </div>
                   <div
-                    class="text-primary"
+                    @click.prevent="toSettings(task.id)"
+                    class="cursor-pointer d-flex align-items-center justify-content-center px-3"
+                    :class="
+                      task.is_published == 1
+                        ? 'text-primary primary-hover'
+                        : 'text-primary-tr primary-tr-hover'
+                    "
+                    style="height: 40px"
                     v-if="
                       authUser != '' && authUser.id == loadedCourse.leader.id
                     "
                   >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
-                      width="20"
-                      height="20"
+                      width="16"
+                      height="16"
                       fill="currentColor"
                       class="bi bi-gear-fill"
                       viewBox="0 0 16 16"

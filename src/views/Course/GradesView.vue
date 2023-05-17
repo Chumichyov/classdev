@@ -1,6 +1,20 @@
 <script>
+import { mapGetters } from "vuex";
+
 export default {
   name: "CourseGradesView",
+
+  mounted() {
+    if (!this.isTeacher) {
+      this.$router.push({
+        name: "error",
+      });
+    }
+  },
+
+  computed: {
+    ...mapGetters(["isTeacher"]),
+  },
 };
 </script>
 

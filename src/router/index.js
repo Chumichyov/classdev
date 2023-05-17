@@ -111,6 +111,13 @@ const routes = [
   },
 
   {
+    path: "/courses/:course/tasks/:task/settings",
+    name: "task.settings",
+    meta: { layout: "default", requiresAuth: true, type: "SettingsView" },
+    component: () => import("@/views/TaskView.vue"),
+  },
+
+  {
     path: "/courses/:course/tasks/:task/folders/:folder",
     name: "folder",
     meta: { layout: "default", requiresAuth: true, type: "FoldersView" },
@@ -122,6 +129,20 @@ const routes = [
     name: "file",
     meta: { layout: "default", requiresAuth: true, type: "FileView" },
     component: () => import("@/views/TaskView.vue"),
+  },
+
+  {
+    path: "/courses/:course/tasks/:task/decisions/:decision/files/:file",
+    name: "fileDecision",
+    meta: { layout: "default", requiresAuth: true, type: "FileView" },
+    component: () => import("@/views/TaskView.vue"),
+  },
+
+  {
+    path: "/courses/:course/tasks/:task/decisions/:decision",
+    name: "decision",
+    meta: { layout: "default", requiresAuth: true },
+    component: () => import("@/views/DecisionView.vue"),
   },
 ];
 

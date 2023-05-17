@@ -49,13 +49,19 @@ export default (api, router, LoadingStatuses) => {
           .catch((err) => {
             ctx.commit("setLoadStatusCourses", LoadingStatuses.Error);
 
-            ctx.commit("setError", {
-              message: err.response.statusText,
-              status: err.response.status,
-            });
+            if (ctx.getters.error.status != err.response.status) {
+              ctx.commit("setError", {
+                message: err.response.statusText,
+                status: err.response.status,
+              });
+            }
 
-            if (err.response.status == 401) {
-              ctx.dispatch("logout", true);
+            if (
+              err.response.status == 401 &&
+              ctx.getters.error.get401 != true
+            ) {
+              ctx.getters.error.get401 = true;
+              ctx.dispatch("logout", false);
             }
 
             router.push({
@@ -81,13 +87,19 @@ export default (api, router, LoadingStatuses) => {
           .catch((err) => {
             ctx.commit("setLoadStatusLoadedCourses", LoadingStatuses.Error);
 
-            ctx.commit("setError", {
-              message: err.response.statusText,
-              status: err.response.status,
-            });
+            if (ctx.getters.error.status != err.response.status) {
+              ctx.commit("setError", {
+                message: err.response.statusText,
+                status: err.response.status,
+              });
+            }
 
-            if (err.response.status == 401) {
-              ctx.dispatch("logout", true);
+            if (
+              err.response.status == 401 &&
+              ctx.getters.error.get401 != true
+            ) {
+              ctx.getters.error.get401 = true;
+              ctx.dispatch("logout", false);
             }
 
             router.push({
@@ -146,51 +158,75 @@ export default (api, router, LoadingStatuses) => {
             ctx.commit("pushCourses", res.data.data);
           })
           .catch((err) => {
-            ctx.commit("setError", {
-              message: err.response.statusText,
-              status: err.response.status,
-            });
+            if (ctx.getters.error.status != err.response.status) {
+              ctx.commit("setError", {
+                message: err.response.statusText,
+                status: err.response.status,
+              });
+            }
 
-            if (err.response.status == 401) {
-              ctx.dispatch("logout", true);
+            if (
+              err.response.status == 401 &&
+              ctx.getters.error.get401 != true
+            ) {
+              ctx.getters.error.get401 = true;
+              ctx.dispatch("logout", false);
             }
           });
       },
 
       async updateCode(ctx, course) {
+        ctx.commit("setLoadStatusUpdateCourse", LoadingStatuses.Loading);
         await api.course
           .updateCode(course)
           .then((res) => {
+            ctx.commit("setLoadStatusUpdateCourse", LoadingStatuses.Ready);
+
             ctx.getters.loadedCourse.information.code = res.data.data.code;
             ctx.getters.loadedCourseInformation.code = res.data.data.code;
           })
           .catch((err) => {
-            ctx.commit("setError", {
-              message: err.response.statusText,
-              status: err.response.status,
-            });
+            if (ctx.getters.error.status != err.response.status) {
+              ctx.commit("setError", {
+                message: err.response.statusText,
+                status: err.response.status,
+              });
+            }
 
-            if (err.response.status == 401) {
-              ctx.dispatch("logout", true);
+            if (
+              err.response.status == 401 &&
+              ctx.getters.error.get401 != true
+            ) {
+              ctx.getters.error.get401 = true;
+              ctx.dispatch("logout", false);
             }
           });
       },
 
       async updateLink(ctx, course) {
+        ctx.commit("setLoadStatusUpdateCourse", LoadingStatuses.Loading);
         await api.course
           .updateLink(course)
           .then((res) => {
+            ctx.commit("setLoadStatusUpdateCourse", LoadingStatuses.Ready);
+
             ctx.getters.loadedCourse.information.link = res.data.data.link;
             ctx.getters.loadedCourseInformation.link = res.data.data.link;
           })
           .catch((err) => {
-            ctx.commit("setError", {
-              message: err.response.statusText,
-              status: err.response.status,
-            });
+            if (ctx.getters.error.status != err.response.status) {
+              ctx.commit("setError", {
+                message: err.response.statusText,
+                status: err.response.status,
+              });
+            }
 
-            if (err.response.status == 401) {
-              ctx.dispatch("logout", true);
+            if (
+              err.response.status == 401 &&
+              ctx.getters.error.get401 != true
+            ) {
+              ctx.getters.error.get401 = true;
+              ctx.dispatch("logout", false);
             }
           });
       },
@@ -201,9 +237,12 @@ export default (api, router, LoadingStatuses) => {
           course: "",
         }
       ) {
+        ctx.commit("setLoadStatusUpdateCourse", LoadingStatuses.Loading);
         await api.course
           .destroyCourse(data)
           .then(() => {
+            ctx.commit("setLoadStatusUpdateCourse", LoadingStatuses.Ready);
+
             ctx.commit("setLoadedCourse", "");
             for (var i = 0; i < ctx.getters.courses.length; i++) {
               if (ctx.getters.courses[i].id == data.course) {
@@ -217,13 +256,19 @@ export default (api, router, LoadingStatuses) => {
             });
           })
           .catch((err) => {
-            ctx.commit("setError", {
-              message: err.response.statusText,
-              status: err.response.status,
-            });
+            if (ctx.getters.error.status != err.response.status) {
+              ctx.commit("setError", {
+                message: err.response.statusText,
+                status: err.response.status,
+              });
+            }
 
-            if (err.response.status == 401) {
-              ctx.dispatch("logout", true);
+            if (
+              err.response.status == 401 &&
+              ctx.getters.error.get401 != true
+            ) {
+              ctx.getters.error.get401 = true;
+              ctx.dispatch("logout", false);
             }
           });
       },
@@ -235,11 +280,12 @@ export default (api, router, LoadingStatuses) => {
           user: "",
         }
       ) {
+        ctx.commit("setLoadStatusUpdateCourse", LoadingStatuses.Loading);
         await api.course
           .expelUser(data)
-          .then((res) => {
-            console.log(res);
-            console.log(ctx.getters.loadedCourse.members.length);
+          .then(() => {
+            ctx.commit("setLoadStatusUpdateCourse", LoadingStatuses.Ready);
+
             for (var i = 0; i < ctx.getters.loadedCourse.members.length; i++) {
               if (ctx.getters.loadedCourse.members[i].id === data.user) {
                 ctx.getters.loadedCourse.members.splice(i, 1);
@@ -248,13 +294,19 @@ export default (api, router, LoadingStatuses) => {
             }
           })
           .catch((err) => {
-            ctx.commit("setError", {
-              message: err.response.statusText,
-              status: err.response.status,
-            });
+            if (ctx.getters.error.status != err.response.status) {
+              ctx.commit("setError", {
+                message: err.response.statusText,
+                status: err.response.status,
+              });
+            }
 
-            if (err.response.status == 401) {
-              ctx.dispatch("logout", true);
+            if (
+              err.response.status == 401 &&
+              ctx.getters.error.get401 != true
+            ) {
+              ctx.getters.error.get401 = true;
+              ctx.dispatch("logout", false);
             }
           });
       },
@@ -267,9 +319,11 @@ export default (api, router, LoadingStatuses) => {
           description: "",
         }
       ) {
+        ctx.commit("setLoadStatusUpdateCourse", LoadingStatuses.Loading);
         await api.course
           .updateCourse(data)
           .then((res) => {
+            ctx.commit("setLoadStatusUpdateCourse", LoadingStatuses.Ready);
             ctx.commit("setLoadedCourseTitle", res.data.data.title);
             ctx.commit("setLoadedCourseDescription", res.data.data.description);
 
@@ -281,13 +335,19 @@ export default (api, router, LoadingStatuses) => {
             });
           })
           .catch((err) => {
-            ctx.commit("setError", {
-              message: err.response.statusText,
-              status: err.response.status,
-            });
+            if (ctx.getters.error.status != err.response.status) {
+              ctx.commit("setError", {
+                message: err.response.statusText,
+                status: err.response.status,
+              });
+            }
 
-            if (err.response.status == 401) {
-              ctx.dispatch("logout", true);
+            if (
+              err.response.status == 401 &&
+              ctx.getters.error.get401 != true
+            ) {
+              ctx.getters.error.get401 = true;
+              ctx.dispatch("logout", false);
             }
           });
       },

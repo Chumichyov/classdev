@@ -24,11 +24,17 @@ export default {
   },
 
   mounted() {
+    if (!this.isTeacher) {
+      this.$router.push({
+        name: "error",
+      });
+    }
+
     this.get();
   },
 
   computed: {
-    ...mapGetters(["loadedCourse", "loadedCourseInformation"]),
+    ...mapGetters(["loadedCourse", "loadedCourseInformation", "isTeacher"]),
   },
 
   validations() {
@@ -123,9 +129,14 @@ export default {
   <div class="pt-4 mw-900 text-light position-relative">
     <div class="main-px">
       <div class="w-100 pb-3">
-        <div class="fs-5 py-2">Информация о курсе</div>
-        <form action="" class="pt-3" @submit.prevent="courseUpdate">
-          <label for="title" class="form-label fw-normal">Название</label>
+        <form action="" class="" @submit.prevent="courseUpdate">
+          <div class="d-flex align-items-center">
+            <div class="fs-5 flex-fill py-2 points-1">Информация о курсе</div>
+            <button type="submit" class="btn btn-primary px-2 py-1">
+              Изменить
+            </button>
+          </div>
+          <label for="title" class="form-label pt-2 fw-normal">Название</label>
           <input
             class="form-control border-gray-1 bg-transparent text-light"
             style="height: 32px"
@@ -155,11 +166,6 @@ export default {
             ref="textarea"
             style="min-height: 99px"
           ></textarea>
-          <div class="w-100 text-end mt-3">
-            <button type="submit" class="btn btn-primary px-2 py-1">
-              Изменить
-            </button>
-          </div>
         </form>
         <div class="fs-5 py-2 mt-3">Подключение</div>
         <form action="" class="py-2" @submit.prevent="codeUpdate">
@@ -258,7 +264,10 @@ export default {
         </form>
         <div class="fs-5 mt-3 py-2">Участники</div>
         <div class="border border-gray-2 rounded">
-          <div class="py-2" v-if="loadedCourse.members">
+          <div
+            class="py-2"
+            v-if="loadedCourse.members && loadedCourse.members[1] != undefined"
+          >
             <div
               class=""
               v-for="member in loadedCourse.members"
@@ -268,21 +277,18 @@ export default {
                 class="px-3 my-hover py-2 d-flex align-items-center"
                 v-if="member.id != loadedCourse.leader.id"
               >
-                <div class="" style="width: 24px; height: 24px">
-                  <img
-                    style="width: 24px; height: 24px"
-                    class="rounded-circle position-relative w-100"
-                    :src="this.$url + member.information.photo_path"
-                    alt=""
-                  />
-                </div>
-                <div class="ms-2 flex-fill">
-                  <span class="cursor-pointer"
-                    >{{ member.name }} {{ member.surname }}</span
-                  >
+                <img
+                  style="width: 24px; height: 24px"
+                  class="rounded-circle position-relative"
+                  :src="this.$url + member.information.photo_path"
+                  alt=""
+                />
+                <div class="ms-2 flex-fill cursor-pointer">
+                  {{ member.name }} {{ member.surname }}
                 </div>
                 <div
-                  class="p-1 text-danger cursor-pointer"
+                  class="p-1 text-danger cursor-pointer d-flex align-items-center justify-content-center"
+                  style="width: 24px; height: 24px"
                   @click.prevent="expelUser(member.id)"
                 >
                   <svg
@@ -301,6 +307,7 @@ export default {
               </div>
             </div>
           </div>
+          <div class="py-2 text-center" v-else>Участники отсутствуют</div>
         </div>
         <div class="fs-5 mt-3 py-2">Опасная зона</div>
         <div class="py-2 px-3 border rounded border-danger">

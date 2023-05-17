@@ -38,7 +38,7 @@ export default (api, router) => {
             ctx.commit("setLoadStatusNotifications", null);
             ctx.commit("setLoadStatusAuthUser", null);
             ctx.commit("setLoadStatusCourses", null);
-
+            ctx.getters.error.get401 = false;
             window.localStorage.setItem("token", res.data.token);
             router.push("/main");
           })
@@ -82,7 +82,7 @@ export default (api, router) => {
             ctx.commit("setLoadStatusNotifications", null);
             ctx.commit("setLoadStatusAuthUser", null);
             ctx.commit("setLoadStatusCourses", null);
-
+            ctx.getters.error.get401 = false;
             window.localStorage.setItem("token", res.data.token);
             router.push("/main");
           })

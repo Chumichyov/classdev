@@ -5,7 +5,7 @@ import { helpers, required, minLength, maxLength } from "@vuelidate/validators";
 import InputComponent from "@/components/InputComponent.vue";
 
 export default {
-  name: "ModalComponent",
+  name: "NewCourseModalComponent",
 
   data: () => ({
     v$: useVuelidate(),

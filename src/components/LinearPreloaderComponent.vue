@@ -1,17 +1,31 @@
 <script>
+import { mapGetters } from "vuex";
+
 export default {
   name: "LinearPreloaderComponent",
 
-  props: {
-    load: {
-      type: String,
-      required: true,
-    },
-
-    load_2: {
-      type: String,
-      required: false,
-    },
+  computed: {
+    ...mapGetters([
+      "loadStatusLoadedCourse",
+      "loadStatusCreateCourse",
+      "loadStatusLoadedCourses",
+      "loadStatusLoadedTasks",
+      "loadStatusLoadedTask",
+      "loadStatusCreateTask",
+      "loadStatusAuthUser",
+      "loadStatusLoadedFiles",
+      "loadStatusLoadedFile",
+      "loadStatusLoadedMainFiles",
+      "loadStatusLoadedNotifications",
+      "loadStatusUpdateCourse",
+      "loadStatusUpdateTask",
+      "loadStatusUpdateFile",
+      "loadStatusUpdateFolder",
+      "loadStatusLoadedDecision",
+      "loadStatusLoadedDecisionFiles",
+      "loadStatusStoreFile",
+      "loadStatusUpdateDecision",
+    ]),
   },
 };
 </script>
@@ -19,7 +33,27 @@ export default {
 <template>
   <div
     class="linear-loader blue position-absolute bottom-0 start-0 end-0"
-    v-if="(this.load_2 && this.load_2 === 'LOADING') || this.load === 'LOADING'"
+    v-if="
+      loadStatusLoadedCourse == 'LOADING' ||
+      loadStatusCreateCourse == 'LOADING' ||
+      loadStatusLoadedCourses == 'LOADING' ||
+      loadStatusLoadedTasks == 'LOADING' ||
+      loadStatusLoadedTask == 'LOADING' ||
+      loadStatusCreateTask == 'LOADING' ||
+      loadStatusAuthUser == 'LOADING' ||
+      loadStatusLoadedFiles == 'LOADING' ||
+      loadStatusLoadedFile == 'LOADING' ||
+      loadStatusLoadedMainFiles == 'LOADING' ||
+      loadStatusLoadedNotifications == 'LOADING' ||
+      loadStatusUpdateCourse == 'LOADING' ||
+      loadStatusUpdateTask == 'LOADING' ||
+      loadStatusUpdateFile == 'LOADING' ||
+      loadStatusUpdateFolder == 'LOADING' ||
+      loadStatusLoadedDecision == 'LOADING' ||
+      loadStatusStoreFile == 'LOADING' ||
+      loadStatusUpdateDecision == 'LOADING' ||
+      loadStatusLoadedDecisionFiles == 'LOADING'
+    "
   >
     <div class=""></div>
   </div>
