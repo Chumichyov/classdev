@@ -42,10 +42,20 @@ export default createStore({
     loadStatusLoadedDecision: null,
     loadStatusLoadedDecisionFiles: null,
     loadStatusStoreFile: null,
+    loadStatusStoreReview: null,
+    loadStatusLoadedReviews: null,
   },
   getters: {
     loadStatusCourses: (state) => {
       return state.loadStatusCourses;
+    },
+
+    loadStatusStoreReview: (state) => {
+      return state.loadStatusStoreReview;
+    },
+
+    loadStatusLoadedReviews: (state) => {
+      return state.loadStatusLoadedReviews;
     },
 
     loadStatusUpdateDecision: (state) => {
@@ -216,6 +226,14 @@ export default createStore({
 
     setLoadStatusStoreFile(state, loadStatusStoreFile) {
       state.loadStatusStoreFile = loadStatusStoreFile;
+    },
+
+    setLoadStatusStoreReview(state, loadStatusStoreReview) {
+      state.loadStatusStoreReview = loadStatusStoreReview;
+    },
+
+    setLoadStatusLoadedReviews(state, loadStatusLoadedReviews) {
+      state.loadStatusLoadedReviews = loadStatusLoadedReviews;
     },
 
     setError(state, error) {

@@ -75,11 +75,12 @@ export default {
   methods: {
     resize() {
       let element = this.$refs["textarea"];
-      const height = element.style.height;
+      let height = element.style.height;
       const scrollHeight = element.scrollHeight;
 
-      if (scrollHeight > height)
+      if (scrollHeight > height.slice(0, -2)) {
         element.style.height = element.scrollHeight + "px";
+      }
     },
 
     updateTask() {

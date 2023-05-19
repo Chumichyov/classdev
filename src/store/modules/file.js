@@ -5,11 +5,17 @@ export default (api, router, LoadingStatuses) => {
       extension: "",
       mode: "",
       typeFolders: "",
+
+      reviews: [],
     },
 
     getters: {
       loadedFile: (state) => {
         return state.loadedFile;
+      },
+
+      reviews: (state) => {
+        return state.reviews;
       },
 
       typeFolders: (state) => {
@@ -309,11 +315,78 @@ export default (api, router, LoadingStatuses) => {
             });
           });
       },
+
+      async storeReview(ctx, data) {
+        ctx.commit("setLoadStatusStoreReview", LoadingStatuses.Loading);
+        await api.file
+          .storeReview(data)
+          .then(() => {
+            ctx.commit("setLoadStatusStoreReview", LoadingStatuses.Ready);
+          })
+          .catch((err) => {
+            console.log(err);
+            ctx.commit("setLoadStatusStoreReview", LoadingStatuses.Error);
+            if (ctx.getters.error.status != err.response.status) {
+              ctx.commit("setError", {
+                message: err.response.statusText,
+                status: err.response.status,
+              });
+            }
+
+            if (
+              err.response.status == 401 &&
+              ctx.getters.error.get401 != true
+            ) {
+              ctx.getters.error.get401 = true;
+              ctx.dispatch("logout", false);
+            }
+
+            router.push({
+              name: "error",
+            });
+          });
+      },
+
+      async getReviews(ctx, data) {
+        ctx.commit("setLoadStatusLoadedReviews", LoadingStatuses.Loading);
+        await api.file
+          .getReviews(data)
+          .then((res) => {
+            ctx.commit("setLoadStatusLoadedReviews", LoadingStatuses.Ready);
+            ctx.commit("setReviews", res.data.data);
+          })
+          .catch((err) => {
+            console.log(err);
+            ctx.commit("setLoadStatusLoadedReviews", LoadingStatuses.Error);
+            if (ctx.getters.error.status != err.response.status) {
+              ctx.commit("setError", {
+                message: err.response.statusText,
+                status: err.response.status,
+              });
+            }
+
+            if (
+              err.response.status == 401 &&
+              ctx.getters.error.get401 != true
+            ) {
+              ctx.getters.error.get401 = true;
+              ctx.dispatch("logout", false);
+            }
+
+            router.push({
+              name: "error",
+            });
+          });
+      },
     },
 
     mutations: {
       setLoadedFile(state, loadedFile) {
         state.loadedFile = loadedFile;
+      },
+
+      setReviews(state, reviews) {
+        state.reviews = reviews;
       },
 
       setTypeFolders(state, typeFolders) {

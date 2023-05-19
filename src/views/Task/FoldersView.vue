@@ -147,6 +147,13 @@ export default {
             }
           });
       } else {
+        this.$store.dispatch("getReviews", {
+          course: course,
+          task: task,
+          decision: decision,
+          file: file,
+        });
+
         this.$store
           .dispatch("getDecisionFile", {
             course: course,

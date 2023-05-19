@@ -43,5 +43,19 @@ export default function (instance) {
         payload
       );
     },
+
+    storeReview(payload) {
+      return instance.post(
+        `/courses/${payload.course}/tasks/${payload.task}/decisions/${payload.decision}/files/${payload.file}/reviews`,
+        payload
+      );
+    },
+
+    getReviews(payload) {
+      return instance.get(
+        `/courses/${payload.course}/tasks/${payload.task}/decisions/${payload.decision}/files/${payload.file}/reviews`,
+        payload
+      );
+    },
   };
 }

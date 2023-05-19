@@ -24,6 +24,7 @@ export default {
       "loadStatusLoadedDecision",
       "loadStatusLoadedDecisionFiles",
       "loadStatusStoreFile",
+      "loadStatusStoreReview",
       "loadStatusUpdateDecision",
     ]),
   },
@@ -52,6 +53,7 @@ export default {
       loadStatusLoadedDecision == 'LOADING' ||
       loadStatusStoreFile == 'LOADING' ||
       loadStatusUpdateDecision == 'LOADING' ||
+      loadStatusStoreReview == 'LOADING' ||
       loadStatusLoadedDecisionFiles == 'LOADING'
     "
   >
