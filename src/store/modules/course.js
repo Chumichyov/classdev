@@ -149,6 +149,34 @@ export default (api, router, LoadingStatuses) => {
         }
       },
 
+      async getMembers(ctx, course) {
+        ctx.commit("setLoadStatusCreateCourse", LoadingStatuses.Loading);
+        await api.course
+          .getMembers(course)
+          .then((res) => {
+            if (res.data.data.length == 0)
+              ctx.commit("setLoadStatusCreateCourse", LoadingStatuses.Empty);
+            else ctx.commit("setLoadStatusCreateCourse", LoadingStatuses.Ready);
+
+            ctx.getters.loadedCourse.members = res.data.data;
+          })
+          .catch((err) => {
+            ctx.commit("setLoadStatusCreateCourse", LoadingStatuses.Error);
+            ctx.commit("setError", {
+              message: err.response.statusText,
+              status: err.response.status,
+            });
+
+            if (err.response.status == 401) {
+              ctx.dispatch("logout", true);
+            }
+
+            router.push({
+              name: "error",
+            });
+          });
+      },
+
       async storeCourses(ctx, course) {
         ctx.commit("setLoadStatusCreateCourse", LoadingStatuses.Loading);
         await api.course
@@ -333,6 +361,70 @@ export default (api, router, LoadingStatuses) => {
                 element.description = data.description;
               }
             });
+          })
+          .catch((err) => {
+            if (ctx.getters.error.status != err.response.status) {
+              ctx.commit("setError", {
+                message: err.response.statusText,
+                status: err.response.status,
+              });
+            }
+
+            if (
+              err.response.status == 401 &&
+              ctx.getters.error.get401 != true
+            ) {
+              ctx.getters.error.get401 = true;
+              ctx.dispatch("logout", false);
+            }
+          });
+      },
+
+      async linkConnection(
+        ctx,
+        data = {
+          link: "",
+        }
+      ) {
+        await api.course
+          .linkConnection(data)
+          .then((res) => {
+            ctx.commit("setLoadedCourse", []);
+
+            if (!res.data.error_message)
+              ctx.commit("setLoadedCourse", res.data.data);
+          })
+          .catch((err) => {
+            if (ctx.getters.error.status != err.response.status) {
+              ctx.commit("setError", {
+                message: err.response.statusText,
+                status: err.response.status,
+              });
+            }
+
+            if (
+              err.response.status == 401 &&
+              ctx.getters.error.get401 != true
+            ) {
+              ctx.getters.error.get401 = true;
+              ctx.dispatch("logout", false);
+            }
+          });
+      },
+
+      async codeConnection(
+        ctx,
+        data = {
+          code: "",
+        }
+      ) {
+        await api.course
+          .codeConnection(data)
+          .then((res) => {
+            ctx.commit("setLoadedCourse", []);
+
+            if (!res.data.error_message)
+              ctx.commit("setLoadedCourse", res.data.data);
           })
           .catch((err) => {
             if (ctx.getters.error.status != err.response.status) {

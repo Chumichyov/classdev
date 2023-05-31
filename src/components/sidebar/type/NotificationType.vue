@@ -42,7 +42,7 @@ export default {
     <div class="w-100">
       <div
         @click.prevent="toNotifications('Inbox', this.$route.query.all)"
-        class="my button text-light cursor-pointer text-decoration-none border-none w-100 text-start d-flex align-items-center px-3 py-2 rounded"
+        class="my button text-light cursor-pointer text-decoration-none border-none w-100 text-start d-flex align-items-center px-2 py-1 rounded"
         :class="this.$route.query.q == 'Inbox' ? 'active' : ''"
       >
         <svg
@@ -62,7 +62,7 @@ export default {
 
       <div
         @click.prevent="toNotifications('Course', this.$route.query.all)"
-        class="my button text-light cursor-pointer text-decoration-none border-none w-100 text-start d-flex align-items-center mt-2 px-3 py-2 rounded"
+        class="my button text-light cursor-pointer text-decoration-none border-none w-100 text-start d-flex align-items-center mt-2 px-2 py-1 rounded"
         :class="this.$route.query.q == 'Course' ? 'active' : ''"
       >
         <img
@@ -73,35 +73,29 @@ export default {
         <span class="ps-2 fw-normal">Курсы</span>
       </div>
 
-      <div class="ms-3 ps-2 border-start">
-        <div
-          @click.prevent="toNotifications('Task', this.$route.query.all)"
-          class="my button text-light cursor-pointer text-decoration-none border-none w-100 text-start d-flex align-items-center mt-2 px-3 py-2 rounded"
-          :class="this.$route.query.q == 'Task' ? 'active' : ''"
-        >
-          <img
-            src="@/assets/note.png"
-            alt=""
-            style="width: 18px; height: 18px"
-          />
-          <span class="ps-2 fw-normal">Задания</span>
-        </div>
-
-        <div
-          @click.prevent="toNotifications('Decision', this.$route.query.all)"
-          class="my button text-light cursor-pointer text-decoration-none border-none w-100 text-start d-flex align-items-center mt-2 px-3 py-2 rounded"
-          :class="this.$route.query.q == 'Decision' ? 'active' : ''"
-        >
-          <img
-            src="@/assets/check.png"
-            alt=""
-            style="width: 18px; height: 18px"
-          />
-          <span class="ps-2 fw-normal">Решения</span>
-        </div>
+      <div
+        @click.prevent="toNotifications('Task', this.$route.query.all)"
+        class="my button text-light cursor-pointer text-decoration-none border-none w-100 text-start d-flex align-items-center mt-2 px-2 py-1 px-4 rounded"
+        :class="this.$route.query.q == 'Task' ? 'active' : ''"
+      >
+        <img src="@/assets/note.png" alt="" style="width: 18px; height: 18px" />
+        <span class="ps-2 fw-normal">Задания</span>
       </div>
 
       <div
+        @click.prevent="toNotifications('Decision', this.$route.query.all)"
+        class="my button text-light cursor-pointer text-decoration-none border-none w-100 text-start d-flex align-items-center mt-2 px-2 py-1 px-4 rounded"
+        :class="this.$route.query.q == 'Decision' ? 'active' : ''"
+      >
+        <img
+          src="@/assets/check.png"
+          alt=""
+          style="width: 18px; height: 18px"
+        />
+        <span class="ps-2 fw-normal">Решения</span>
+      </div>
+
+      <!-- <div
         @click.prevent="toNotifications('Messenger', this.$route.query.all)"
         class="my button text-light cursor-pointer text-decoration-none border-none w-100 text-start d-flex align-items-center mt-2 px-3 py-2 rounded"
         :class="this.$route.query.q == 'Messenger' ? 'active' : ''"
@@ -112,7 +106,7 @@ export default {
           style="width: 18px; height: 18px"
         />
         <span class="ps-2 fw-normal">Мессенджер</span>
-      </div>
+      </div> -->
     </div>
   </div>
 </template>

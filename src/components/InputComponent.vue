@@ -51,7 +51,7 @@ export default {
       style="height: 32px"
       :type="type"
       :name="name"
-      :placeholder="modelValue"
+      :value="modelValue"
       @input="$emit('update:modelValue', $event.target.value)"
     />
 

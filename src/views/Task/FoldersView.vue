@@ -47,7 +47,7 @@ export default {
       const scrollHeight = element.scrollHeight;
 
       if (scrollHeight > height)
-        element.style.height = element.scrollHeight + "px";
+        element.style.height = element.scrollHeight + 2 + "px";
     },
 
     getDecisionFiles(folder = null) {
@@ -128,6 +128,12 @@ export default {
 
     toFile(course, task, file, decision = null) {
       if (decision == null) {
+        this.$store.dispatch("getReviews", {
+          course: course,
+          task: task,
+          decision: undefined,
+          file: file,
+        });
         this.$store
           .dispatch("getTaskFile", {
             course: course,
@@ -184,6 +190,7 @@ export default {
         decision: this.decision.id,
         description: this.description,
         completed: completed,
+        grade: null,
       });
     },
 
@@ -529,7 +536,7 @@ export default {
             decisionFolders != '' &&
             folder.original_name != 'user_' + this.authUser.id
           "
-          class="text-light text-decoration-none flex-fill d-flex align-items-center justify-content-start cursor-pointer"
+          class="text-light text-decoration-none flex-fill d-flex align-items-center justify-content-start cursor-pointer my-hover"
           :class="
             (decisionFolders.length - 1 != index ||
               decisionFiles.length != 0) &&
@@ -539,7 +546,7 @@ export default {
           "
         >
           <div
-            class="flex-fill py-2 ps-3 d-flex align-items-center my-hover"
+            class="flex-fill py-2 ps-3 d-flex align-items-center"
             @click.prevent="getDecisionFiles(folder.id)"
           >
             <div class="">
@@ -560,6 +567,13 @@ export default {
             <div class="ms-3">
               {{ folder.original_name }}
             </div>
+          </div>
+          <div
+            class="px-3 text-primary fw-bold text-center"
+            style="width: 50px"
+            v-if="folder.reviews != 0"
+          >
+            {{ folder.reviews }}
           </div>
           <div
             v-if="!isTeacher && decision.completed.id == 1"
@@ -584,7 +598,7 @@ export default {
       <div v-for="(file, index) in decisionFiles" :key="file.id" class="w-100">
         <div
           v-if="decisionFiles != ''"
-          class="d-flex align-items-center justify-content-start cursor-pointer"
+          class="d-flex align-items-center justify-content-start cursor-pointer my-hover"
           :class="
             decisionFiles.length - 1 != index
               ? 'border-bottom border-gray-2 '
@@ -592,7 +606,7 @@ export default {
           "
         >
           <div
-            class="flex-fill d-flex align-items-center py-2 ps-3 my-hover"
+            class="flex-fill d-flex align-items-center py-2 ps-3"
             @click.prevent="
               toFile(loadedCourse.id, loadedTask.id, file.id, decision.id)
             "
@@ -632,6 +646,13 @@ export default {
                 d="M14 3a.702.702 0 0 1-.037.225l-1.684 10.104A2 2 0 0 1 10.305 15H5.694a2 2 0 0 1-1.973-1.671L2.037 3.225A.703.703 0 0 1 2 3c0-1.105 2.686-2 6-2s6 .895 6 2zM3.215 4.207l1.493 8.957a1 1 0 0 0 .986.836h4.612a1 1 0 0 0 .986-.836l1.493-8.957C11.69 4.689 9.954 5 8 5c-1.954 0-3.69-.311-4.785-.793z"
               />
             </svg>
+          </div>
+          <div
+            class="px-3 text-primary fw-bold text-center"
+            style="width: 50px"
+            v-if="file.reviews != 0"
+          >
+            {{ file.reviews }}
           </div>
         </div>
       </div>
@@ -677,18 +698,17 @@ export default {
         </svg>
       </div>
     </div>
-
+    <!-- Decision description and status -->
     <div
       class=""
       v-if="
         !isTeacher &&
         typeFolders != 'Task' &&
         typeFolders != 'Decision' &&
-        loadedTask.type.id == 1 &&
-        decision.completed.id != 1
+        loadedTask.type.id == 1
       "
     >
-      <div class="px-2 mt-4">
+      <div class="px-2 mt-4" v-if="decision.completed.id != 1">
         {{ decision.description }}
       </div>
       <div
@@ -697,7 +717,20 @@ export default {
       >
         <div class="d-flex align-items-center py-1">
           <div class="w-100" style="max-width: 130px">Статус:</div>
-          <div class="ms-3">{{ decision.completed.title }}</div>
+          <div
+            class="ms-3"
+            :class="
+              decision.completed && decision.completed.id == 3
+                ? 'text-success'
+                : decision.completed && decision.completed.id == 4
+                ? 'text-warning'
+                : decision.completed && decision.completed.id == 5
+                ? 'text-danger'
+                : 'text-primary'
+            "
+          >
+            {{ decision.completed.title }}
+          </div>
         </div>
         <div class="d-flex align-items-center py-1">
           <div class="w-100" style="max-width: 130px">Оценка:</div>
@@ -712,7 +745,7 @@ export default {
           </div>
         </div>
       </div>
-      <div class="text-end mt-3 w-100">
+      <div class="text-end mt-3 w-100" v-if="decision.completed.id == 2">
         <button class="btn btn-danger" @click.prevent="updateDecision(1)">
           Отменить отправку
         </button>
@@ -737,6 +770,7 @@ export default {
       </button>
     </div>
 
+    <!-- All Decisions (For Teacher) -->
     <div
       :class="
         loadedFolders != '' ||

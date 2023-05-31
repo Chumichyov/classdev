@@ -324,7 +324,6 @@ export default (api, router, LoadingStatuses) => {
             ctx.commit("setLoadStatusStoreReview", LoadingStatuses.Ready);
           })
           .catch((err) => {
-            console.log(err);
             ctx.commit("setLoadStatusStoreReview", LoadingStatuses.Error);
             if (ctx.getters.error.status != err.response.status) {
               ctx.commit("setError", {
@@ -348,16 +347,92 @@ export default (api, router, LoadingStatuses) => {
       },
 
       async getReviews(ctx, data) {
-        ctx.commit("setLoadStatusLoadedReviews", LoadingStatuses.Loading);
+        if (data.decision != undefined) {
+          ctx.commit("setLoadStatusLoadedReviews", LoadingStatuses.Loading);
+          await api.file
+            .getReviews(data)
+            .then((res) => {
+              ctx.commit("setLoadStatusLoadedReviews", LoadingStatuses.Ready);
+              ctx.commit("setReviews", res.data.data);
+            })
+            .catch((err) => {
+              ctx.commit("setLoadStatusLoadedReviews", LoadingStatuses.Error);
+              if (ctx.getters.error.status != err.response.status) {
+                ctx.commit("setError", {
+                  message: err.response.statusText,
+                  status: err.response.status,
+                });
+              }
+
+              if (
+                err.response.status == 401 &&
+                ctx.getters.error.get401 != true
+              ) {
+                ctx.getters.error.get401 = true;
+                ctx.dispatch("logout", false);
+              }
+
+              router.push({
+                name: "error",
+              });
+            });
+        } else {
+          ctx.commit("setReviews", []);
+        }
+      },
+
+      async updateReview(ctx, data) {
+        ctx.commit("setLoadStatusUpdateReview", LoadingStatuses.Loading);
         await api.file
-          .getReviews(data)
+          .updateReview(data)
           .then((res) => {
-            ctx.commit("setLoadStatusLoadedReviews", LoadingStatuses.Ready);
-            ctx.commit("setReviews", res.data.data);
+            ctx.commit("setLoadStatusUpdateReview", LoadingStatuses.Ready);
+            for (var i = 0; i < ctx.getters.reviews.length; i++) {
+              if (ctx.getters.reviews[i].id === data.review) {
+                ctx.getters.reviews[i] = res.data.data;
+                break;
+              }
+            }
           })
           .catch((err) => {
-            console.log(err);
-            ctx.commit("setLoadStatusLoadedReviews", LoadingStatuses.Error);
+            ctx.commit("setLoadStatusUpdateReview", LoadingStatuses.Error);
+            if (ctx.getters.error.status != err.response.status) {
+              ctx.commit("setError", {
+                message: err.response.statusText,
+                status: err.response.status,
+              });
+            }
+
+            if (
+              err.response.status == 401 &&
+              ctx.getters.error.get401 != true
+            ) {
+              ctx.getters.error.get401 = true;
+              ctx.dispatch("logout", false);
+            }
+
+            router.push({
+              name: "error",
+            });
+          });
+      },
+
+      async deleteReview(ctx, data) {
+        ctx.commit("setLoadStatusUpdateReview", LoadingStatuses.Loading);
+        await api.file
+          .deleteReview(data)
+          .then(() => {
+            for (var i = 0; i < ctx.getters.reviews.length; i++) {
+              if (ctx.getters.reviews[i].id === data.review) {
+                ctx.getters.reviews.splice(i, 1);
+                break;
+              }
+            }
+
+            ctx.commit("setLoadStatusUpdateReview", LoadingStatuses.Ready);
+          })
+          .catch((err) => {
+            ctx.commit("setLoadStatusUpdateReview", LoadingStatuses.Error);
             if (ctx.getters.error.status != err.response.status) {
               ctx.commit("setError", {
                 message: err.response.statusText,

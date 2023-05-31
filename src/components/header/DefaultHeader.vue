@@ -1,6 +1,7 @@
 <script>
 import { mapGetters } from "vuex";
 import NewCourseModalComponent from "../modal/NewCourseModalComponent.vue";
+import ConnectCourseModalComponent from "../modal/ConnectCourseModalComponent.vue";
 import LinearPreloaderComponent from "@/components/LinearPreloaderComponent.vue";
 
 export default {
@@ -9,6 +10,7 @@ export default {
   components: {
     NewCourseModalComponent,
     LinearPreloaderComponent,
+    ConnectCourseModalComponent,
   },
 
   computed: {
@@ -63,6 +65,7 @@ export default {
 </script>
 
 <template>
+  <connect-course-modal-component></connect-course-modal-component>
   <new-course-modal-component></new-course-modal-component>
   <header
     class="background-dark-3 text-light main-px d-flex flex-wrap align-items-center justify-content-between position-relative"
@@ -115,7 +118,11 @@ export default {
                 Создать курс
               </li>
 
-              <li class="px-3 py-2 my-hover cursor-pointer text-light">
+              <li
+                class="px-3 py-2 my-hover cursor-pointer text-light"
+                data-bs-toggle="modal"
+                data-bs-target="#connectCourse"
+              >
                 Вступить в курс
               </li>
               <!-- <li class="border-bottom border-gray-2"></li> -->
@@ -200,52 +207,6 @@ export default {
       </div>
     </div>
 
-    <linear-preloader-component
-      :load="loadStatusLoadedCourse"
-    ></linear-preloader-component>
-
-    <linear-preloader-component
-      :load="loadStatusUpdateTask"
-    ></linear-preloader-component>
-
-    <linear-preloader-component
-      :load="loadStatusUpdateCourse"
-    ></linear-preloader-component>
-
-    <linear-preloader-component
-      :load="loadStatusCreateCourse"
-    ></linear-preloader-component>
-
-    <linear-preloader-component
-      :load="loadStatusLoadedCourses"
-    ></linear-preloader-component>
-
-    <linear-preloader-component
-      :load="loadStatusLoadedTasks"
-    ></linear-preloader-component>
-
-    <linear-preloader-component
-      :load="loadStatusLoadedTask"
-    ></linear-preloader-component>
-
-    <linear-preloader-component
-      :load="loadStatusCreateTask"
-    ></linear-preloader-component>
-
-    <linear-preloader-component
-      :load="loadStatusLoadedFiles"
-    ></linear-preloader-component>
-
-    <linear-preloader-component
-      :load="loadStatusLoadedFile"
-    ></linear-preloader-component>
-
-    <linear-preloader-component
-      :load="loadStatusLoadedMainFiles"
-    ></linear-preloader-component>
-
-    <linear-preloader-component
-      :load="loadStatusLoadedNotifications"
-    ></linear-preloader-component>
+    <linear-preloader-component></linear-preloader-component>
   </header>
 </template>

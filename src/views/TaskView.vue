@@ -216,7 +216,11 @@ export default {
               this.$route.name == 'fileDecision' &&
               isTeacher
             "
-            @click.prevent="toDecision(decision.id)"
+            @click.prevent="
+              toDecision(
+                decision.id != null ? decision.id : this.$route.params.decision
+              )
+            "
           >
             Решение
           </li>

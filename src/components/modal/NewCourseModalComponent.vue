@@ -2,7 +2,6 @@
 import { useVuelidate } from "@vuelidate/core";
 import { mapGetters } from "vuex";
 import { helpers, required, minLength, maxLength } from "@vuelidate/validators";
-import InputComponent from "@/components/InputComponent.vue";
 
 export default {
   name: "NewCourseModalComponent",
@@ -16,9 +15,7 @@ export default {
     },
   }),
 
-  components: {
-    InputComponent,
-  },
+  components: {},
 
   computed: {
     ...mapGetters([
@@ -114,7 +111,40 @@ export default {
         >
           <div class="modal-body py-0 border-0 text-light fw-normal">
             <div class="">
-              <input-component
+              <input
+                class="form-control w-100 text-light bg-transparent border-gray-2"
+                type="text"
+                v-model="course.title"
+                placeholder="Название курса"
+              />
+              <div
+                class="text-danger"
+                v-if="
+                  v$.course.title.$errors != '' && v$.course.title.$errors[0]
+                "
+              >
+                {{ v$.course.title.$errors[0].$message }}
+              </div>
+              <input
+                class="form-control w-100 text-light bg-transparent border-gray-2 mt-3"
+                type="text"
+                v-model="course.group"
+                placeholder="Группа"
+              />
+              <div
+                class="text-danger"
+                v-if="
+                  v$.course.group.$errors != '' && v$.course.group.$errors[0]
+                "
+              >
+                {{ v$.course.group.$errors[0].$message }}
+              </div>
+              <textarea
+                class="form-control bg-transparent mt-3 border-gray-2 w-100 text-light"
+                v-model="course.description"
+                placeholder="Описание (необязательно)"
+              ></textarea>
+              <!-- <input-component
                 class="w-100"
                 :label="'Название курса'"
                 v-model="course.title"
@@ -140,11 +170,11 @@ export default {
                 type="text"
                 name="name"
                 :error="v$.course.description.$errors"
-              ></textarea>
+              ></textarea> -->
             </div>
           </div>
           <div
-            class="modal-footer mt-2 border-0 d-flex align-items-center justify-content-between"
+            class="modal-footer mt-2 border-0 d-flex align-items-center justify-content-end"
           >
             <button
               v-if="
@@ -161,7 +191,7 @@ export default {
             </button>
             <button
               type="button"
-              class="btn btn-secondary"
+              class="btn btn-secondary ms-2"
               data-bs-dismiss="modal"
             >
               Закрыть

@@ -79,7 +79,7 @@ export default {
       const scrollHeight = element.scrollHeight;
 
       if (scrollHeight > height.slice(0, -2)) {
-        element.style.height = element.scrollHeight + "px";
+        element.style.height = element.scrollHeight + 2 + "px";
       }
     },
 

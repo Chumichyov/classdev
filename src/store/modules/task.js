@@ -2,6 +2,7 @@ export default (api, router, LoadingStatuses) => {
   return {
     state: {
       tasks: [],
+      onlyTasks: [],
 
       loadedTask: "",
       tasksSearch: "",
@@ -26,6 +27,10 @@ export default (api, router, LoadingStatuses) => {
 
       tasks: (state) => {
         return state.tasks;
+      },
+
+      onlyTasks: (state) => {
+        return state.onlyTasks;
       },
 
       mainFolder: (state) => {
@@ -71,6 +76,7 @@ export default (api, router, LoadingStatuses) => {
             else ctx.commit("setLoadStatusLoadedTasks", LoadingStatuses.Ready);
 
             ctx.commit("setTasks", res.data.data.tasks);
+            ctx.commit("setOnlyTasks", res.data.data.onlyTasks);
             ctx.commit("setDates", res.data.data.dates);
           })
           .catch((err) => {
@@ -276,22 +282,22 @@ export default (api, router, LoadingStatuses) => {
           .then(() => {
             ctx.commit("setLoadStatusUpdateTask", LoadingStatuses.Ready);
 
-            ctx
-              .dispatch("getTasks", {
-                course: data.course,
-                search: "",
-                type: "Date",
-              })
-              .then(() => {
-                router.push({
-                  name: "course.tasks",
-                  params: {
-                    course: data.course,
-                  },
-                });
+            ctx.dispatch("getTasks", {
+              course: data.course,
+              search: "",
+              type: "Date",
+            });
 
-                ctx.commit("setLoadedTask", "");
+            ctx.dispatch("getMembers", data.course).then(() => {
+              router.push({
+                name: "course.tasks",
+                params: {
+                  course: data.course,
+                },
               });
+
+              ctx.commit("setLoadedTask", "");
+            });
           })
           .catch((err) => {
             console.log(err);
@@ -367,6 +373,10 @@ export default (api, router, LoadingStatuses) => {
     mutations: {
       setTasks(state, tasks) {
         state.tasks = tasks;
+      },
+
+      setOnlyTasks(state, onlyTasks) {
+        state.onlyTasks = onlyTasks;
       },
 
       setCreatedTask(state, createdTask) {

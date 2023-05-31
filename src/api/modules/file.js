@@ -57,5 +57,19 @@ export default function (instance) {
         payload
       );
     },
+
+    updateReview(payload) {
+      return instance.patch(
+        `/courses/${payload.course}/tasks/${payload.task}/decisions/${payload.decision}/files/${payload.file}/reviews/${payload.review}`,
+        payload
+      );
+    },
+
+    deleteReview(payload) {
+      return instance.delete(
+        `/courses/${payload.course}/tasks/${payload.task}/decisions/${payload.decision}/files/${payload.file}/reviews/${payload.review}`,
+        payload
+      );
+    },
   };
 }

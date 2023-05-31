@@ -11,6 +11,9 @@ export default {
       getDateTime(date) {
         return moment(date).format("LLL");
       },
+      getTime(date) {
+        return moment(date).format("LT");
+      },
     };
   },
 };

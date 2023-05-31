@@ -7,6 +7,7 @@ import taskModule from "./modules/task";
 import folderModule from "./modules/folder";
 import fileModule from "./modules/file";
 import decisionModule from "./modules/decision";
+import messengerModule from "./modules/messenger";
 
 export default {
   auth: authModule(instance),
@@ -17,4 +18,5 @@ export default {
   folder: folderModule(instance),
   file: fileModule(instance),
   decision: decisionModule(instance),
+  messenger: messengerModule(instance),
 };

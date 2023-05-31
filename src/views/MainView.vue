@@ -1,7 +1,7 @@
 <script>
 import { mapGetters } from "vuex";
 import SidebarComponent from "@/components/sidebar/SidebarComponent.vue";
-import NotificationBlockComponent from "@/components/notification/NotificationBlockComponent.vue";
+// import NotificationBlockComponent from "@/components/notification/NotificationBlockComponent.vue";
 import NewCourseModalComponent from "@/components/modal/NewCourseModalComponent.vue";
 // import LinearPreloaderComponent from "@/components/LinearPreloaderComponent.vue";
 import ModalComponent from "@/components/modal/ModalComponent.vue";
@@ -27,6 +27,10 @@ export default {
   },
 
   methods: {
+    read(notification) {
+      this.$store.dispatch("notificationRead", notification);
+    },
+
     toNotifications() {
       this.$store
         .dispatch("notifications", {
@@ -53,7 +57,7 @@ export default {
 
   components: {
     SidebarComponent,
-    NotificationBlockComponent,
+    // NotificationBlockComponent,
     NewCourseModalComponent,
     ModalComponent,
     // LinearPreloaderComponent,
@@ -66,33 +70,15 @@ export default {
   <div
     class="d-flex flex-column flex-lg-row align-items-start justify-content-start position-relative vw-100"
   >
-    <!-- <linear-preloader-component
-      :load="loadStatusLoadedCourses"
-    ></linear-preloader-component>
-
-    <linear-preloader-component
-      :load="loadStatusCreateCourse"
-    ></linear-preloader-component>
-
-    <linear-preloader-component
-      :load="loadStatusLoadedCourse"
-    ></linear-preloader-component>
-
-    <linear-preloader-component
-      :load="loadStatusLoadedTasks"
-    ></linear-preloader-component>
-
-    <linear-preloader-component
-      :load="loadStatusLoadedNotifications"
-    ></linear-preloader-component> -->
-
     <sidebar-component></sidebar-component>
-
     <new-course-modal-component></new-course-modal-component>
-    <div class="main-px pt-4 flex-fill overflow-hidden w-100-992">
-      <div class="d-flex align-items-center justify-content-between w-100">
+
+    <div class="pt-4 flex-fill overflow-hidden w-100-992">
+      <div
+        class="main-px d-flex align-items-center justify-content-between w-100"
+      >
         <div class="text-light d-flex align-items-center">
-          <div class="">Новое в участиях</div>
+          <div class="">Уведомления</div>
           <div class="ms-3 text-primary">
             <Popper>
               <svg
@@ -131,11 +117,9 @@ export default {
       >
         Упс... Похоже здесь нет уведомлений
       </div>
-      <div
-        class="pt-3 d-flex align-items-start justify-content-start"
-        v-if="notificationsDefault != ''"
-      >
-        <div
+      <div class="pt-3 main-px main-px-767" v-if="notificationsDefault != ''">
+        <!-- Slider -->
+        <!-- <div
           class=""
           v-for="notification in notificationsDefault"
           :key="notification.id"
@@ -156,7 +140,45 @@ export default {
               :dotted="2"
             ></notification-block-component>
           </splide-slide>
-        </splide>
+        </splide> -->
+        <div
+          @click.prevent="read(notification.id)"
+          :data-bs-target="'#notification-' + notification.id"
+          data-bs-toggle="modal"
+          class="py-2 text-light cursor-pointer"
+          :class="[
+            {
+              'background-dark-2': !(index % 2),
+              'rounded-top': index == 0,
+              'rounded-bottom': index + 1 == notificationsDefault.length,
+            },
+          ]"
+          v-for="(notification, index) in notificationsDefault"
+          :key="notification.id"
+        >
+          <modal-component :notification="notification"></modal-component>
+          <div class="d-md-flex align-items-center px-3">
+            <div
+              class="flex-shrink-0 text-light d-flex align-items-center"
+              style="width: 210px"
+              v-if="notification.type"
+            >
+              <div
+                class="rounded-circle"
+                :class="[
+                  {
+                    'bg-primary': !notification.isRead,
+                  },
+                ]"
+                style="width: 10px; height: 10px"
+              ></div>
+              <div class="ms-2">
+                {{ notification.type.title }}
+              </div>
+            </div>
+            <div class="points-1 text-gray-1">{{ notification.message }}</div>
+          </div>
+        </div>
       </div>
     </div>
   </div>

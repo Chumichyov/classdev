@@ -25,7 +25,10 @@ export default {
       "loadStatusLoadedDecisionFiles",
       "loadStatusStoreFile",
       "loadStatusStoreReview",
+      "loadStatusUpdateReview",
       "loadStatusUpdateDecision",
+      "loadStatusLoadedMessengers",
+      "loadStatusLoadedMessenger",
     ]),
   },
 };
@@ -54,6 +57,9 @@ export default {
       loadStatusStoreFile == 'LOADING' ||
       loadStatusUpdateDecision == 'LOADING' ||
       loadStatusStoreReview == 'LOADING' ||
+      loadStatusUpdateReview == 'LOADING' ||
+      loadStatusLoadedMessengers == 'LOADING' ||
+      loadStatusLoadedMessenger == 'LOADING' ||
       loadStatusLoadedDecisionFiles == 'LOADING'
     "
   >

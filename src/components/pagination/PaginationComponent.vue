@@ -19,12 +19,12 @@ export default {
 
 <template>
   <div
-    class="pt-3 w-100 d-flex align-items-center justify-content-center text-light pb-4 border-top border-gray-2"
+    class="pt-3 w-100 d-flex align-items-center justify-content-center text-light pb-4 border-top border-primary mt-3"
   >
     <!-- -1 -->
     <div class="rounded-30">
       <div
-        class="rounded-circle border w-100 h-100 d-flex align-items-center justify-content-center"
+        class="rounded-circle border w-100 h-100 d-flex align-items-center justify-content-center cursor-pointer border-primary text-primary"
         v-if="pagination.current_page !== 1"
         @click.prevent="
           this.$store.dispatch(action, {
@@ -34,7 +34,18 @@ export default {
           })
         "
       >
-        <img src="../../assets/angle-double-small-left.png" alt="" class="" />
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="16"
+          height="16"
+          fill="currentColor"
+          class="bi bi-caret-left-fill"
+          viewBox="0 0 16 16"
+        >
+          <path
+            d="m3.86 8.753 5.482 4.796c.646.566 1.658.106 1.658-.753V3.204a1 1 0 0 0-1.659-.753l-5.48 4.796a1 1 0 0 0 0 1.506z"
+          />
+        </svg>
       </div>
     </div>
     <!-- pages -->
@@ -57,7 +68,7 @@ export default {
             })
           "
           :class="link.active ? 'active' : ''"
-          class="pagination rounded-30 rounded-circle border ms-2 user-select-none"
+          class="pagination rounded-30 text-primary rounded-circle border border-primary ms-2 user-select-none cursor-pointer fw-bold"
         >
           {{ link.label }}
         </div>
@@ -94,7 +105,7 @@ export default {
     <!-- +1 -->
     <div class="rounded-30 ms-2">
       <div
-        class="rounded-circle border w-100 h-100 d-flex align-items-center justify-content-center"
+        class="rounded-circle border-primary border w-100 h-100 d-flex align-items-center justify-content-center cursor-pointer text-primary"
         v-if="pagination.current_page !== pagination.last_page"
         @click.prevent="
           this.$store.dispatch(action, {
@@ -104,7 +115,18 @@ export default {
           })
         "
       >
-        <img src="../../assets/angle-double-small-right.png" alt="" class="" />
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="16"
+          height="16"
+          fill="currentColor"
+          class="bi bi-caret-right-fill"
+          viewBox="0 0 16 16"
+        >
+          <path
+            d="m12.14 8.753-5.482 4.796c-.646.566-1.658.106-1.658-.753V3.204a1 1 0 0 1 1.659-.753l5.48 4.796a1 1 0 0 1 0 1.506z"
+          />
+        </svg>
       </div>
     </div>
   </div>

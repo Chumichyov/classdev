@@ -11,6 +11,7 @@ import taskModule from "./modules/task";
 import folderModule from "./modules/folder";
 import fileModule from "./modules/file";
 import decisionModule from "./modules/decision";
+import messengerModule from "./modules/messenger";
 
 export default createStore({
   state: {
@@ -25,6 +26,7 @@ export default createStore({
     loadStatusNotifications: null,
 
     loadStatusUpdateDecision: null,
+    loadStatusUpdateReview: null,
     loadStatusUpdateTask: null,
     loadStatusUpdateFolder: null,
     loadStatusUpdateFile: null,
@@ -44,6 +46,8 @@ export default createStore({
     loadStatusStoreFile: null,
     loadStatusStoreReview: null,
     loadStatusLoadedReviews: null,
+    loadStatusLoadedMessengers: null,
+    loadStatusLoadedMessenger: null,
   },
   getters: {
     loadStatusCourses: (state) => {
@@ -52,6 +56,10 @@ export default createStore({
 
     loadStatusStoreReview: (state) => {
       return state.loadStatusStoreReview;
+    },
+
+    loadStatusUpdateReview: (state) => {
+      return state.loadStatusUpdateReview;
     },
 
     loadStatusLoadedReviews: (state) => {
@@ -136,6 +144,14 @@ export default createStore({
 
     loadStatusLoadedNotifications: (state) => {
       return state.loadStatusLoadedNotifications;
+    },
+
+    loadStatusLoadedMessengers: (state) => {
+      return state.loadStatusLoadedMessengers;
+    },
+
+    loadStatusLoadedMessenger: (state) => {
+      return state.loadStatusLoadedMessenger;
     },
 
     error: (state) => {
@@ -236,6 +252,18 @@ export default createStore({
       state.loadStatusLoadedReviews = loadStatusLoadedReviews;
     },
 
+    setLoadStatusUpdateReview(state, loadStatusUpdateReview) {
+      state.loadStatusUpdateReview = loadStatusUpdateReview;
+    },
+
+    setLoadStatusLoadedMessengers(state, loadStatusLoadedMessengers) {
+      state.loadStatusLoadedMessengers = loadStatusLoadedMessengers;
+    },
+
+    setLoadStatusLoadedMessenger(state, loadStatusLoadedMessenger) {
+      state.loadStatusLoadedMessenger = loadStatusLoadedMessenger;
+    },
+
     setError(state, error) {
       state.error = error;
     },
@@ -250,5 +278,6 @@ export default createStore({
     folder: folderModule(api, router, LoadingStatuses),
     file: fileModule(api, router, LoadingStatuses),
     decision: decisionModule(api, router, LoadingStatuses),
+    messenger: messengerModule(api, router, LoadingStatuses),
   },
 });

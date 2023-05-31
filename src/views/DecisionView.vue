@@ -104,6 +104,28 @@ export default {
       }
     },
 
+    updateDecision(status) {
+      this.$store.dispatch("updateDecision", {
+        course: this.$route.params.course,
+        task: this.$route.params.task,
+        decision: this.$route.params.decision,
+        description: this.decision.description,
+        grade: null,
+        completed: status,
+      });
+    },
+
+    changeGrade() {
+      this.$store.dispatch("updateDecision", {
+        course: this.$route.params.course,
+        task: this.$route.params.task,
+        decision: this.$route.params.decision,
+        description: this.decision.description,
+        grade: this.decision.grade,
+        completed: this.decision.completed.id,
+      });
+    },
+
     getDecisionFiles(folder = null) {
       if (folder !== null) {
         this.$store.dispatch("getDecisionFiles", {
@@ -122,6 +144,12 @@ export default {
 
     toFile(course, task, file, decision = null) {
       if (decision == null) {
+        this.$store.dispatch("getReviews", {
+          course: course,
+          task: task,
+          decision: undefined,
+          file: file,
+        });
         this.$store
           .dispatch("getTaskFile", {
             course: course,
@@ -340,7 +368,7 @@ export default {
               decisionFolders != '' &&
               folder.original_name != 'user_' + this.authUser.id
             "
-            class="text-light text-decoration-none flex-fill d-flex align-items-center justify-content-start cursor-pointer"
+            class="text-light text-decoration-none flex-fill d-flex align-items-center justify-content-start cursor-pointer my-hover"
             :class="
               (decisionFolders.length - 1 != index ||
                 decisionFiles.length != 0) &&
@@ -350,7 +378,7 @@ export default {
             "
           >
             <div
-              class="flex-fill py-2 ps-3 d-flex align-items-center my-hover"
+              class="flex-fill py-2 ps-3 d-flex align-items-center"
               @click.prevent="getDecisionFiles(folder.id)"
             >
               <div class="">
@@ -372,6 +400,16 @@ export default {
                 {{ folder.original_name }}
               </div>
             </div>
+            <div
+              class="px-3 text-primary fw-bold"
+              v-if="
+                decision.completed_id != 1 &&
+                decision.completed_id != 2 &&
+                folder.reviews != 0
+              "
+            >
+              {{ folder.reviews }}
+            </div>
           </div>
         </div>
         <!-- Files -->
@@ -382,7 +420,7 @@ export default {
         >
           <div
             v-if="decisionFiles != ''"
-            class="d-flex align-items-center justify-content-start cursor-pointer"
+            class="d-flex align-items-center justify-content-start cursor-pointer my-hover"
             :class="
               decisionFiles.length - 1 != index
                 ? 'border-bottom border-gray-2 '
@@ -393,7 +431,7 @@ export default {
               @click.prevent="
                 toFile(loadedCourse.id, loadedTask.id, file.id, decision.id)
               "
-              class="flex-fill d-flex align-items-center py-2 ps-3 my-hover text-white"
+              class="flex-fill d-flex align-items-center py-2 ps-3 text-white"
             >
               <div class="">
                 <svg
@@ -412,6 +450,16 @@ export default {
               <div class="ms-3 flex-fill">
                 {{ file.original_name }}
               </div>
+            </div>
+            <div
+              class="px-3 text-primary fw-bold"
+              v-if="
+                decision.completed_id != 1 &&
+                decision.completed_id != 2 &&
+                file.reviews != 0
+              "
+            >
+              {{ file.reviews }}
             </div>
           </div>
         </div>
@@ -433,14 +481,55 @@ export default {
         >
           <div class="d-flex align-items-center py-1">
             <div class="w-100" style="max-width: 130px">Статус:</div>
-            <div class="ms-3" v-if="decision.completed">
+            <div
+              class="ms-3"
+              v-if="decision.completed"
+              :class="
+                decision.completed && decision.completed.id == 3
+                  ? 'text-success'
+                  : decision.completed && decision.completed.id == 4
+                  ? 'text-warning'
+                  : decision.completed && decision.completed.id == 5
+                  ? 'text-danger'
+                  : 'text-primary'
+              "
+            >
               {{ decision.completed.title }}
             </div>
           </div>
           <div class="d-flex align-items-center py-1">
             <div class="w-100" style="max-width: 130px">Оценка:</div>
-            <div class="ms-3">
-              {{ decision.grade ? decision.grade : "Не назначена" }}
+            <div
+              class="ms-3 d-flex align-items-center"
+              v-if="decision.completed && decision.completed.id == 3"
+            >
+              <input
+                type="text"
+                name="grade"
+                v-model="decision.grade"
+                class="form-control py-1 bg-transparent border-gray-2 text-light"
+                placeholder="Назначьте оценку"
+              />
+              <button
+                class="ms-2 bg-transparent border-0 text-primary"
+                @click.prevent="changeGrade()"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16"
+                  height="16"
+                  fill="currentColor"
+                  class="bi bi-send-fill"
+                  viewBox="0 0 16 16"
+                >
+                  <path
+                    d="M15.964.686a.5.5 0 0 0-.65-.65L.767 5.855H.766l-.452.18a.5.5 0 0 0-.082.887l.41.26.001.002 4.995 3.178 3.178 4.995.002.002.26.41a.5.5 0 0 0 .886-.083l6-15Zm-1.833 1.89L6.637 10.07l-.215-.338a.5.5 0 0 0-.154-.154l-.338-.215 7.494-7.494 1.178-.471-.47 1.178Z"
+                  />
+                </svg>
+              </button>
+            </div>
+            <div class="ms-3" v-else>
+              {{ decision.grade == null ? "Отсутствует" : decision.grade }}
             </div>
           </div>
           <div class="d-flex align-items-center py-1">
@@ -450,6 +539,29 @@ export default {
             </div>
           </div>
         </div>
+      </div>
+      <div class="mt-3 text-end">
+        <button
+          class="btn btn-outline-danger px-2 py-1"
+          v-if="decision.completed && decision.completed.id != 5"
+          @click.prevent="updateDecision(5)"
+        >
+          Отклонить
+        </button>
+        <button
+          class="btn btn-outline-warning px-2 py-1 ms-2"
+          v-if="decision.completed && decision.completed.id != 4"
+          @click.prevent="updateDecision(4)"
+        >
+          Переделать
+        </button>
+        <button
+          class="btn btn-outline-success px-2 py-1 ms-2"
+          v-if="decision.completed && decision.completed.id != 3"
+          @click.prevent="updateDecision(3)"
+        >
+          Принять
+        </button>
       </div>
     </div>
   </div>

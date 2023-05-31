@@ -8,6 +8,18 @@ export default function (instance) {
       return instance.get(`courses/${course}`);
     },
 
+    getMembers(course) {
+      return instance.get(`courses/${course}/members`);
+    },
+
+    linkConnection(payload) {
+      return instance.post(`connection/${payload.link}`);
+    },
+
+    codeConnection(payload) {
+      return instance.post(`connection`, payload);
+    },
+
     storeCourses(payload) {
       return instance.post("courses/store", payload);
     },

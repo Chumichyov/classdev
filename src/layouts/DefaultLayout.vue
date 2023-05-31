@@ -32,12 +32,12 @@ export default {
     :status_course="loadStatusCourses"
     :status_notification="loadStatusNotifications"
     :status_auth="loadStatusAuthUser"
-    class="position-absolute top-0 bottom-0 start-0 end-0 main-grid"
+    class="position-absolute top-0 bottom-0 start-0 end-0 main-grid vh-100 d-flex flex-column"
   >
     <template #content>
       <default-header />
       <transition name="slide-fade" mode="out-in">
-        <router-view class="" style="" v-slot="{ Component }">
+        <router-view class="flex-fill" style="" v-slot="{ Component }">
           <component :is="Component" />
         </router-view>
       </transition>

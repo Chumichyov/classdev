@@ -42,7 +42,6 @@ export default (api, router, LoadingStatuses) => {
         await api.decision
           .showAuthDecision(data)
           .then((res) => {
-            console.log(res.data.data);
             if (res.data.data.length == 0) {
               ctx.commit("setLoadStatusLoadedDecision", LoadingStatuses.Empty);
             } else {
@@ -59,7 +58,6 @@ export default (api, router, LoadingStatuses) => {
             }
           })
           .catch((err) => {
-            console.log(err);
             ctx.commit("setLoadStatusLoadedDecision", LoadingStatuses.Error);
 
             if (ctx.getters.error.status != err.response.status) {
@@ -98,8 +96,6 @@ export default (api, router, LoadingStatuses) => {
             if (res.data.data.length == 0) {
               ctx.commit("setLoadStatusLoadedDecision", LoadingStatuses.Empty);
             } else {
-              ctx.commit("setLoadStatusLoadedDecision", LoadingStatuses.Ready);
-
               ctx.commit("setBelonging", "");
               ctx.commit("setTypeFolders", "");
               ctx.commit("setDecisionCurrent", res.data.data.folder.id);
@@ -107,10 +103,10 @@ export default (api, router, LoadingStatuses) => {
               ctx.commit("setDecision", res.data.data.decision);
               ctx.commit("setDecisionFolders", res.data.data.folders);
               ctx.commit("setDecisionFiles", res.data.data.files);
+              ctx.commit("setLoadStatusLoadedDecision", LoadingStatuses.Ready);
             }
           })
           .catch((err) => {
-            console.log(err);
             ctx.commit("setLoadStatusLoadedDecision", LoadingStatuses.Error);
 
             if (ctx.getters.error.status != err.response.status) {
@@ -141,6 +137,7 @@ export default (api, router, LoadingStatuses) => {
           task: "",
           decision: "",
           description: "",
+          grade: null,
           completed: null,
         }
       ) {
@@ -148,17 +145,21 @@ export default (api, router, LoadingStatuses) => {
         await api.decision
           .updateDecision(data)
           .then((res) => {
-            console.log(res);
             if (res.data.data.length == 0) {
               ctx.commit("setLoadStatusUpdateDecision", LoadingStatuses.Empty);
             } else {
               ctx.commit("setLoadStatusUpdateDecision", LoadingStatuses.Ready);
             }
 
+            ctx.dispatch("getMembers", data.course);
             ctx.commit("setDecision", res.data.data);
+
+            for (var i = 0; i < ctx.getters.decisions.length; i++) {
+              if (ctx.getters.decisions[i].id == res.data.data.id)
+                ctx.getters.decisions[i] = res.data.data;
+            }
           })
           .catch((err) => {
-            console.log(err);
             ctx.commit("setLoadStatusUpdateDecision", LoadingStatuses.Error);
 
             if (ctx.getters.error.status != err.response.status) {

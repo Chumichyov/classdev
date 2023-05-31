@@ -144,6 +144,20 @@ const routes = [
     meta: { layout: "default", requiresAuth: true },
     component: () => import("@/views/DecisionView.vue"),
   },
+
+  {
+    path: "/courses/:course/chats/:messenger",
+    name: "chat",
+    meta: { layout: "default", requiresAuth: true, type: "chat" },
+    component: () => import("@/views/CourseView.vue"),
+  },
+
+  {
+    path: "/connection/:link",
+    name: "connection",
+    meta: { requiresAuth: true },
+    component: () => import("@/views/ConnectionView.vue"),
+  },
 ];
 
 const router = createRouter({

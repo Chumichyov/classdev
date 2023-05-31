@@ -2,8 +2,9 @@
 import { mapGetters, mapMutations } from "vuex";
 import PaginationComponent from "@/components/pagination/PaginationComponent.vue";
 import SidebarComponent from "@/components/sidebar/SidebarComponent.vue";
-import InputComponent from "@/components/InputComponent.vue";
-import NotificationBlockComponent from "@/components/notification/NotificationBlockComponent.vue";
+import ModalComponent from "@/components/modal/ModalComponent.vue";
+
+// import NotificationBlockComponent from "@/components/notification/NotificationBlockComponent.vue";
 // import LinearPreloaderComponent from "@/components/LinearPreloaderComponent.vue";
 
 export default {
@@ -36,6 +37,10 @@ export default {
   methods: {
     ...mapMutations(["setNotificationSearch"]),
 
+    read(notification) {
+      this.$store.dispatch("notificationRead", notification);
+    },
+
     newNotifications() {
       let route = "";
 
@@ -60,25 +65,21 @@ export default {
   components: {
     PaginationComponent,
     SidebarComponent,
-    InputComponent,
-    NotificationBlockComponent,
-    // LinearPreloaderComponent,
+    ModalComponent,
+    // NotificationBlockComponent,
   },
 };
 </script>
 
 <template>
-  <div class="d-flex align-items-start justify-content-start position-relative">
-    <!-- <linear-preloader-component
-      :load="loadStatusLoadedNotifications"
-    ></linear-preloader-component> -->
-
+  <div
+    class="d-lg-flex align-items-start justify-content-start position-relative"
+  >
     <sidebar-component></sidebar-component>
-
     <div class="d-flex w-100 justify-content-center flex-column pt-4">
-      <div class="main-px mw-768 w-100">
-        <div class>
-          <form action class="w-100 d-flex align-items-center">
+      <div class="w-100">
+        <div class="header main-px">
+          <div action class="w-100 d-flex align-items-center">
             <div class @click.prevent="newNotifications">
               <router-link
                 :to="
@@ -111,21 +112,41 @@ export default {
                 >Непрочитанные</router-link
               >
             </div>
-
-            <input-component
-              class="w-100"
-              v-model="search"
-              :name="'search'"
-              v-on:input="newNotifications"
-            ></input-component>
-          </form>
+            <div class="d-flex align-items-center flex-fill">
+              <input
+                style="height: 34px"
+                type="text"
+                class="form-control border-gray-2 bg-transparent flex-fill text-light"
+                placeholder="Поиск..."
+                v-model="search"
+              />
+              <button
+                @click.prevent="newNotifications()"
+                style="height: 34px"
+                class="ms-2 text-light d-flex align-items-center justify-content-center px-2 py-1 btn btn-primary"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16"
+                  height="16"
+                  fill="currentColor"
+                  class="bi bi-search"
+                  viewBox="0 0 16 16"
+                >
+                  <path
+                    d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"
+                  />
+                </svg>
+              </button>
+            </div>
+          </div>
         </div>
-        <div v-if="notifications != ''">
-          <div style="min-height: 884px">
+        <div v-if="notifications != ''" class="main-px main-px-767">
+          <div style="min-height: 624px">
             <div
               class="pt-4 d-flex flex-wrap align-items-center justify-content-center justify-content-md-between"
             >
-              <div
+              <!-- <div
                 v-for="notification in notifications"
                 :key="notification.id"
                 class="w-100 mw-500-768 d-flex"
@@ -135,6 +156,46 @@ export default {
                   :dotted="2"
                   :modal="true"
                 ></notification-block-component>
+              </div> -->
+              <div
+                @click.prevent="read(notification.id)"
+                :data-bs-target="'#notification-' + notification.id"
+                data-bs-toggle="modal"
+                class="py-2 text-light cursor-pointer w-100"
+                :class="[
+                  {
+                    'background-dark-2': !(index % 2),
+                    'rounded-top': index == 0,
+                    'rounded-bottom': index + 1 == notifications.length,
+                  },
+                ]"
+                v-for="(notification, index) in notifications"
+                :key="notification.id"
+              >
+                <modal-component :notification="notification"></modal-component>
+                <div class="d-md-flex align-items-center px-3">
+                  <div
+                    class="flex-shrink-0 text-light d-flex align-items-center"
+                    style="width: 210px"
+                    v-if="notification.type"
+                  >
+                    <div
+                      class="rounded-circle"
+                      :class="[
+                        {
+                          'bg-primary': !notification.isRead,
+                        },
+                      ]"
+                      style="width: 10px; height: 10px"
+                    ></div>
+                    <div class="ms-2">
+                      {{ notification.type.title }}
+                    </div>
+                  </div>
+                  <div class="points-1 text-gray-1">
+                    {{ notification.message }}
+                  </div>
+                </div>
               </div>
             </div>
           </div>

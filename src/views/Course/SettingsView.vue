@@ -67,14 +67,20 @@ export default {
       this.course.title = this.loadedCourse.title;
       this.course.description = this.loadedCourse.description;
       this.code = this.loadedCourseInformation.code;
-      this.link = this.$url + this.loadedCourseInformation.link;
+      this.link =
+        this.$url + "api/connection/" + this.loadedCourseInformation.link;
 
       this.resize();
     },
 
     resize() {
       let element = this.$refs["textarea"];
-      element.style.height = element.scrollHeight + "px";
+      let height = element.style.height;
+      const scrollHeight = element.scrollHeight;
+
+      if (scrollHeight > height.slice(0, -2)) {
+        element.style.height = element.scrollHeight + 2 + "px";
+      }
     },
 
     codeUpdate() {
@@ -106,7 +112,8 @@ export default {
           course: this.$route.params.course,
         })
         .then(() => {
-          this.link = this.$url + this.loadedCourseInformation.link;
+          this.link =
+            this.$url + "api/connection/" + this.loadedCourseInformation.link;
         });
     },
 

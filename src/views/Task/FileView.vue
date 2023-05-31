@@ -1,6 +1,14 @@
 <script>
+import { useVuelidate } from "@vuelidate/core";
 import { mapGetters } from "vuex";
-// import LinearPreloaderComponent from "@/components/LinearPreloaderComponent.vue";
+import {
+  helpers,
+  required,
+  minLength,
+  maxLength,
+  integer,
+} from "@vuelidate/validators";
+import ReviewModalComponent from "@/components/modal/ReviewModalComponent.vue";
 
 import Prism from "prismjs";
 import "prismjs/themes/prism-tomorrow.css";
@@ -29,14 +37,11 @@ export default {
   name: "FileView",
 
   components: {
-    // LinearPreloaderComponent,
+    ReviewModalComponent,
   },
 
   data: () => ({
-    // highlights: [
-    //   { first: 6, type: "Error", message: "Some Error" },
-    //   { first: 4, type: "Success", message: "Some Success" },
-    // ],
+    v$: useVuelidate(),
     isHighlighted: false,
 
     review: {
@@ -46,9 +51,59 @@ export default {
       title: "",
       description: null,
     },
+
+    viewReviews: [],
   }),
 
+  validations() {
+    return {
+      review: {
+        title: {
+          required: helpers.withMessage("Поле не должно быть пустым", required),
+          maxLength: helpers.withMessage(
+            "Максимальная длина: 36 символа",
+            maxLength(36)
+          ),
+          minLength: helpers.withMessage(
+            "Минимальная длина: 2 символа",
+            minLength(2)
+          ),
+        },
+        color: {
+          required: helpers.withMessage("Поле не должно быть пустым", required),
+          maxLength: helpers.withMessage(
+            "Цвет должен быть в формате HEX",
+            maxLength(7)
+          ),
+          minLength: helpers.withMessage(
+            "Цвет должен быть в формате HEX",
+            minLength(7)
+          ),
+        },
+        start: {
+          required: helpers.withMessage("Поле не должно быть пустым", required),
+          integer: helpers.withMessage("Введите номер строки", integer),
+        },
+        end: {
+          required: helpers.withMessage("Поле не должно быть пустым", required),
+          integer: helpers.withMessage(
+            "Введите номер строки. Если строка одна, продублируйте поле начала.",
+            integer
+          ),
+        },
+        description: {
+          maxLength: helpers.withMessage(
+            "Максимальная длина: 768 символа",
+            maxLength(768)
+          ),
+        },
+      },
+    };
+  },
+
   mounted() {
+    this.getViewReview();
+
     if (this.loadStatusLoadedFile == "READY" && !this.isHighlighted) {
       this.lineHighlight();
       this.isHighlighted = true;
@@ -111,61 +166,130 @@ export default {
       "mainFolder",
       "isTeacher",
       "reviews",
+      "decision",
     ]),
   },
 
   methods: {
-    resize() {
-      let element = this.$refs["textarea"];
+    getViewReview() {
+      console.log(1);
+      this.viewReviews = [];
+      this.reviews.forEach((el) => {
+        this.viewReviews.push({
+          start: el.start,
+          end: el.end,
+          color: this.hexToRgb(el.color),
+        });
+      });
+    },
+
+    resize(ref) {
+      let element =
+        this.$refs[ref][0] == undefined ? this.$refs[ref] : this.$refs[ref][0];
       const height = element.style.height;
       const scrollHeight = element.scrollHeight;
-
       if (scrollHeight > height.slice(0, -2))
-        element.style.height = element.scrollHeight + "px";
+        element.style.height = element.scrollHeight + 2 + "px";
     },
 
     storeReview() {
+      this.v$.$validate("course");
+
+      if (!this.v$.$error) {
+        this.$store
+          .dispatch("storeReview", {
+            course: this.$route.params.course,
+            task: this.$route.params.task,
+            decision: this.$route.params.decision,
+            file: this.$route.params.file,
+            color: this.review.color,
+            start: this.review.start,
+            end: this.review.end,
+            title: this.review.title,
+            description: this.review.description,
+          })
+          .then(() => {
+            this.$store
+              .dispatch("getReviews", {
+                course: this.$route.params.course,
+                task: this.$route.params.task,
+                decision: this.$route.params.decision,
+                file: this.$route.params.file,
+              })
+              .then(() => {
+                this.getViewReview();
+                this.lineHighlight();
+
+                this.v$.$reset();
+                this.review.start = "";
+                this.review.end = "";
+                this.review.title = "";
+                this.review.description = "";
+              });
+          });
+      }
+    },
+
+    updateReview(index) {
       this.$store
-        .dispatch("storeReview", {
+        .dispatch("updateReview", {
           course: this.$route.params.course,
           task: this.$route.params.task,
           decision: this.$route.params.decision,
           file: this.$route.params.file,
-          color: this.review.color,
-          start: this.review.start,
-          end: this.review.end,
-          title: this.review.title,
-          description: this.review.description,
+          review: this.reviews[index].id,
+          color: this.reviews[index].color,
+          start: this.reviews[index].start,
+          end: this.reviews[index].end,
+          title: this.reviews[index].title,
+          description: this.reviews[index].description,
         })
         .then(() => {
-          this.$store
-            .dispatch("getReviews", {
-              course: this.$route.params.course,
-              task: this.$route.params.task,
-              decision: this.$route.params.decision,
-              file: this.$route.params.file,
-            })
-            .then(() => {
-              this.lineHighlight();
-            });
-
-          this.review.start = "";
-          this.review.end = "";
-          this.review.title = "";
-          this.review.description = "";
+          this.getViewReview();
+          this.lineHighlight();
         });
     },
 
+    deleteReview(index) {
+      this.$store
+        .dispatch("deleteReview", {
+          course: this.$route.params.course,
+          task: this.$route.params.task,
+          decision: this.$route.params.decision,
+          file: this.$route.params.file,
+          review: this.reviews[index].id,
+        })
+        .then(() => {
+          this.getViewReview();
+          this.lineHighlight();
+        });
+    },
+
+    hexToRgb(hex) {
+      return hex
+        .replace(
+          /^#?([a-f\d])([a-f\d])([a-f\d])$/i,
+          (m, r, g, b) => "#" + r + r + g + g + b + b
+        )
+        .substring(1)
+        .match(/.{2}/g)
+        .map((x) => parseInt(x, 16));
+    },
+
+    lineClear() {
+      for (let index = 0; index < this.loadedFile.lines.length; index++) {
+        delete document.getElementById(index + "line").dataset.bsTarget;
+        delete document.getElementById(index + "line").dataset.bsToggle;
+        // document.getElementById(index + "line").dataset.bsTarget = null;
+        // document.getElementById(index + "line").dataset.bsToggle = null;
+        document
+          .getElementById(index + "line")
+          .setAttribute("style", "background-color: transparent ");
+      }
+    },
+
     lineHighlight() {
-      const hexToRgb = (hex) =>
-        hex
-          .replace(
-            /^#?([a-f\d])([a-f\d])([a-f\d])$/i,
-            (m, r, g, b) => "#" + r + r + g + g + b + b
-          )
-          .substring(1)
-          .match(/.{2}/g)
-          .map((x) => parseInt(x, 16));
+      this.lineClear();
 
       this.reviews.forEach((review) => {
         let start = review.start;
@@ -173,35 +297,46 @@ export default {
         let color = review.color;
 
         if (start == end) {
+          document.getElementById(start + "line").dataset.bsTarget =
+            "#review-" + review.id;
+          document.getElementById(start + "line").dataset.bsToggle = "modal";
           document
             .getElementById(start + "line")
             .setAttribute(
               "style",
-              "background-color: rgba(" + hexToRgb(color) + ", .1) !important"
+              "background-color: rgba(" +
+                this.hexToRgb(color) +
+                ", .1) !important; cursor: pointer"
             );
         } else {
-          console.log(1);
+          for (start; start <= end; start++) {
+            document.getElementById(start + "line").dataset.bsTarget =
+              "#review-" + review.id;
+            document.getElementById(start + "line").dataset.bsToggle = "modal";
+            document
+              .getElementById(start + "line")
+              .setAttribute(
+                "style",
+                "background-color: rgba(" +
+                  this.hexToRgb(color) +
+                  ", .1) !important; cursor: pointer"
+              );
+          }
         }
       });
-      // this.highlights.forEach((highlight) => {
-      //   let first = highlight.first;
-      //   let last = highlight.last;
-      //   let type =
-      //     highlight == "error"
-      //       ? ERROR
-      //       : highlight == "success"
-      //       ? SUCCESS
-      //       : DOUBTFUL;
-      //   if (last == null) {
-      //     document.getElementById(first).classList.add(type);
-      //   }
-      // });
     },
   },
 };
 </script>
 
 <template>
+  <review-modal-component
+    v-on:highlight="lineHighlight"
+    v-on:clear="lineClear"
+    v-for="review in reviews"
+    :key="review.id"
+    :review="review"
+  ></review-modal-component>
   <div class="main-px mw-900 mt-4 mb-4">
     <div
       class="w-100 border border-bottom-0 border-gray-2 rounded-top px-3 py-2 d-flex align-items-center"
@@ -243,12 +378,25 @@ export default {
       </div>
     </div>
     <div
-      class="mt-3 py-2 pb-3"
-      v-if="isTeacher && this.$route.name == 'fileDecision'"
+      class="mt-4"
+      v-if="
+        isTeacher &&
+        this.$route.name == 'fileDecision' &&
+        decision.completed &&
+        decision.completed.id == 2
+      "
     >
       <!-- <label for="colors" class="form-label"> Select Color </label> -->
-      <div class="px-3 fs-5 pb-3">Рецензия</div>
-      <div class="px-3 d-flex align-items-center">
+      <div class="d-flex align-items-center justify-content-between pb-2">
+        <div class="fs-5">Создание рецензии</div>
+        <button
+          class="btn btn-primary px-2 py-1"
+          @click.prevent="storeReview()"
+        >
+          Создать
+        </button>
+      </div>
+      <div class="d-flex align-items-start">
         <input
           style="max-width: 32px; height: 32px"
           type="color"
@@ -263,51 +411,260 @@ export default {
           <option value="#c8c164"></option>
           <option value="#c86464"></option>
         </datalist>
-
-        <input
-          class="form-control border-gray-2 bg-transparent text-light flex-fill ms-3"
-          style="height: 32px"
-          type="text"
-          name="title"
-          placeholder="Название"
-          v-model="review.title"
-        />
+        <div class="flex-fill ms-3">
+          <input
+            class="form-control border-gray-2 bg-transparent text-light w-100"
+            style="height: 32px"
+            type="text"
+            name="title"
+            placeholder="Название"
+            v-model="review.title"
+          />
+          <div class="text-danger points-1">
+            {{
+              v$.review.title.$errors[0]
+                ? v$.review.title.$errors[0].$message
+                : ""
+            }}
+          </div>
+        </div>
       </div>
-      <div class="mt-3 d-flex align-items-center justify-content-between px-3">
-        <input
-          class="form-control border-gray-2 bg-transparent text-light flex-fill me-2"
-          style="height: 32px"
-          type="text"
-          name="title"
-          placeholder="Начало"
-          v-model="review.start"
-        /><input
-          class="form-control border-gray-2 bg-transparent text-light flex-fill ms-2"
-          style="height: 32px"
-          type="text"
-          name="title"
-          placeholder="Конец"
-          v-model="review.end"
-        />
+      <div class="mt-3 d-flex align-items-start justify-content-between">
+        <div class="flex-fill me-2">
+          <input
+            class="form-control border-gray-2 bg-transparent text-light w-100"
+            style="height: 32px"
+            type="text"
+            name="title"
+            placeholder="Начало"
+            v-model="review.start"
+          />
+          <div class="text-danger points-1">
+            {{
+              v$.review.start.$errors[0]
+                ? v$.review.start.$errors[0].$message
+                : ""
+            }}
+          </div>
+        </div>
+        <div class="flex-fill">
+          <input
+            class="form-control border-gray-2 bg-transparent text-light w-100"
+            style="height: 32px"
+            type="text"
+            name="title"
+            placeholder="Конец"
+            v-model="review.end"
+          />
+          <div class="text-danger points-1">
+            {{
+              v$.review.end.$errors[0] ? v$.review.end.$errors[0].$message : ""
+            }}
+          </div>
+        </div>
       </div>
-      <div class="px-3 mt-3">
+      <div class="mt-3">
         <textarea
           class="p-2 text-light background-dark-1 rounded form-control border-gray-2"
           type="text"
           name="name"
-          ref="textarea"
-          @input="resize()"
-          @focus="resize()"
+          ref="textareaModal"
+          @input="resize('textareaModal')"
+          @focus="resize('textareaModal')"
           style="min-height: 66px"
           placeholder="Описание"
           v-model="review.description"
         ></textarea>
-      </div>
-      <div class="px-3 w-100 text-end mt-3">
-        <button class="btn btn-primary" @click.prevent="storeReview()">
-          Создать рецензию
-        </button>
+        <div class="text-danger points-1">
+          {{
+            v$.review.description.$errors[0]
+              ? v$.review.description.$errors[0].$message
+              : ""
+          }}
+        </div>
       </div>
     </div>
+    <div
+      class="d-flex align-items-center justify-content-between mt-4"
+      v-if="reviews != ''"
+    >
+      <div class="fs-5">Рецензии</div>
+    </div>
+    <div
+      class="d-flex align-items-start"
+      :class="index == 0 ? 'mt-3' : 'mt-4'"
+      v-for="(loopReview, index) in reviews"
+      :key="loopReview.id"
+    >
+      <!-- <div
+        class="border rounded-circle d-flex align-items-center justify-content-center border-2 position-absolute top-0 start-0 background-dark-1"
+        style="
+          width: 24px;
+          height: 24px;
+          font-size: 12px;
+          margin: -12px 0 0 -12px;
+        "
+        :style="
+          'border-color: rgba(' +
+          this.hexToRgb(loopReview.color) +
+          ', .2) !important'
+        "
+      >
+        {{ this.viewReviews[index] ? this.viewReviews[index].start : "" }}
+      </div>
+      <div
+        class="border rounded-circle d-flex align-items-center justify-content-center border-2 position-absolute bottom-0 start-0 background-dark-1"
+        style="
+          width: 24px;
+          height: 24px;
+          font-size: 12px;
+          margin-bottom: -12px;
+          margin-left: -12px;
+        "
+        :style="
+          'border-color: rgba(' +
+          this.hexToRgb(loopReview.color) +
+          ', .2) !important'
+        "
+      >
+        {{ this.viewReviews[index] ? this.viewReviews[index].end : "" }}
+      </div> -->
+      <div
+        class="d-flex flex-column align-items-center justify-content-between"
+        style="align-self: stretch"
+      >
+        <div
+          class="border rounded-circle d-flex align-items-center justify-content-center border-2"
+          style="width: 24px; height: 24px; font-size: 12px"
+          :style="
+            'border-color: rgba(' +
+            this.hexToRgb(loopReview.color) +
+            ', .2) !important'
+          "
+        >
+          {{ this.viewReviews[index] ? this.viewReviews[index].start : "" }}
+        </div>
+        <div
+          class="rounded flex-fill"
+          style="width: 2px"
+          :style="
+            'background-color: rgba(' +
+            this.hexToRgb(loopReview.color) +
+            ', .2) !important'
+          "
+        ></div>
+        <div
+          class="border rounded-circle d-flex align-items-center justify-content-center border-2"
+          style="width: 24px; height: 24px; font-size: 12px"
+          :style="
+            'border-color: rgba(' +
+            this.hexToRgb(loopReview.color) +
+            ', .2) !important'
+          "
+        >
+          {{ this.viewReviews[index] ? this.viewReviews[index].end : "" }}
+        </div>
+      </div>
+      <div
+        class="w-100 ms-3 py-2"
+        v-if="isTeacher && decision.completed && decision.completed.id == 2"
+      >
+        <div class="d-flex align0items-center flex-fill">
+          <input
+            class="form-control border-gray-2 bg-transparent text-light flex-fill"
+            style="height: 32px"
+            type="text"
+            name="title"
+            placeholder="Название"
+            v-model="loopReview.title"
+          />
+          <input
+            class="form-control border-gray-2 bg-transparent text-light flex-fill ms-2"
+            style="height: 32px; max-width: 60px"
+            type="text"
+            name="title"
+            placeholder="Начало"
+            v-model="loopReview.start"
+          />
+          <input
+            class="form-control border-gray-2 bg-transparent text-light flex-fill ms-2"
+            style="height: 32px; max-width: 60px"
+            type="text"
+            name="title"
+            placeholder="Конец"
+            v-model="loopReview.end"
+          />
+        </div>
+        <div class="d-flex align-items-start justify-content-between mt-2">
+          <textarea
+            class="p-2 text-light background-dark-1 rounded form-control border-gray-2 flex-fill"
+            type="text"
+            name="name"
+            :ref="'textarea' + loopReview.id"
+            @focus="resize('textarea' + loopReview.id)"
+            @input="resize('textarea' + loopReview.id)"
+            style="min-height: 90px"
+            placeholder="Описание"
+            v-model="loopReview.description"
+          ></textarea>
+          <div class="d-flex flex-column ms-2" style="align-self: stretch">
+            <input
+              type="color"
+              style="width: 24px"
+              class="form-control border-gray-2 p-1 bg-transparent flex-fill rounded"
+              list="defaultColors"
+              id="colors"
+              placeholder="Select Color"
+              v-model="loopReview.color"
+            />
+          </div>
+          <datalist
+            id="defaultColors"
+            class="background-dark-1 border-gray-2 rounded"
+          >
+            <option value="#00ff00"></option>
+            <option value="#c8c164"></option>
+            <option value="#c86464"></option>
+          </datalist>
+        </div>
+        <div class="d-flex align-items-center justify-content-end mt-2">
+          <button
+            class="btn btn-danger px-2 py-1"
+            @click.prevent="deleteReview(index)"
+          >
+            Удалить
+          </button>
+          <button
+            class="btn btn-primary px-2 py-1 ms-2"
+            @click.prevent="updateReview(index)"
+          >
+            Изменить
+          </button>
+        </div>
+      </div>
+      <div class="ms-3 py-3" v-else>
+        <div class="text-primary fw-bold points-1" style="">
+          {{ loopReview.title }}
+        </div>
+        <div class="mt-1">{{ loopReview.description }}</div>
+      </div>
+    </div>
+    <!-- <div class="d-flex align-items-center flex-wrap me-3" v-if="isTeacher">
+      <div
+        data-bs-toggle="modal"
+        :data-bs-target="'#review-' + review.id"
+        :style="
+          'background-color: rgba(' +
+          this.hexToRgb(review.color) +
+          ', .1) !important'
+        "
+        class="ms-3 mt-3 px-3 py-1 rounded cursor-pointer text-light"
+        v-for="review in reviews"
+        :key="review.id"
+      >
+        <span v-if="review.start == review.end">{{ review.start }}</span>
+        <span v-else>{{ review.start }}-{{ review.end }}</span>
+      </div>
+    </div> -->
   </div>
 </template>

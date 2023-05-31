@@ -1,11 +1,36 @@
 <script>
-import { mapGetters } from "vuex";
+import { mapGetters, mapMutations } from "vuex";
 
 export default {
   name: "CourseMembersView",
 
   computed: {
-    ...mapGetters(["loadedCourse", "leaderPhotoPath"]),
+    ...mapGetters(["loadedCourse", "leaderPhotoPath", "isTeacher"]),
+  },
+
+  methods: {
+    ...mapMutations(["setMessenger"]),
+
+    toChat(messenger) {
+      this.$store.dispatch("getMessengers", {
+        course: this.$route.params.course,
+      });
+
+      this.$store
+        .dispatch("getMessenger", {
+          course: this.$route.params.course,
+          messenger,
+        })
+        .then(() => {
+          this.$router.push({
+            name: "chat",
+            params: {
+              course: this.$route.params.course,
+              messenger: messenger,
+            },
+          });
+        });
+    },
   },
 };
 </script>
@@ -20,9 +45,10 @@ export default {
         >
           <div class="fs-5 px-3 py-2">Преподаватель</div>
           <div
-            class="py-2 pb-2 d-flex align-items-center w-100 px-3 cursor-pointer my-hover"
+            class="d-flex align-items-center w-100 cursor-pointer my-hover"
+            style="height: 40px"
           >
-            <div class="" style="width: 24px; height: 24px">
+            <div class="my-2 ms-3" style="width: 24px; height: 24px">
               <img
                 style="width: 24px; height: 24px"
                 class="rounded-circle position-relative w-100"
@@ -30,9 +56,27 @@ export default {
                 alt=""
               />
             </div>
-            <div class="ms-2">
+            <div class="ms-2 flex-fill py-2">
               {{ loadedCourse.leader.name }}
               {{ loadedCourse.leader.surname }}
+            </div>
+            <div
+              v-if="loadedCourse.messenger"
+              class="cursor-pointer d-flex align-items-center justify-content-center px-3 h-100 text-primary primary-hover"
+              @click.prevent="toChat(loadedCourse.messenger.id)"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                fill="currentColor"
+                class="bi bi-chat-fill"
+                viewBox="0 0 16 16"
+              >
+                <path
+                  d="M8 15c4.418 0 8-3.134 8-7s-3.582-7-8-7-8 3.134-8 7c0 1.76.743 3.37 1.97 4.6-.097 1.016-.417 2.13-.771 2.966-.079.186.074.394.273.362 2.256-.37 3.597-.938 4.18-1.234A9.06 9.06 0 0 0 8 15z"
+                />
+              </svg>
             </div>
           </div>
         </div>
@@ -48,10 +92,11 @@ export default {
               :key="member.id"
             >
               <div
-                class="d-flex align-items-center w-100 px-3 py-2 my-hover cursor-pointer"
+                class="d-flex align-items-center w-100 my-hover cursor-pointer"
                 v-if="member.id != loadedCourse.leader.id"
+                style="height: 40px"
               >
-                <div class="" style="width: 24px; height: 24px">
+                <div class="ms-3 my-2" style="width: 24px; height: 24px">
                   <img
                     style="width: 24px; height: 24px"
                     class="rounded-circle position-relative w-100"
@@ -59,9 +104,27 @@ export default {
                     alt=""
                   />
                 </div>
-                <div class="ms-2">
+                <div class="ms-2 flex-fill py-2" v-if="member.messenger[0]">
                   {{ member.name }}
                   {{ member.surname }}
+                </div>
+                <div
+                  v-if="member.messenger[0] && isTeacher"
+                  class="cursor-pointer d-flex align-items-center justify-content-center px-3 h-100 text-primary primary-hover"
+                  @click.prevent="toChat(member.messenger[0].id)"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="16"
+                    height="16"
+                    fill="currentColor"
+                    class="bi bi-chat-fill"
+                    viewBox="0 0 16 16"
+                  >
+                    <path
+                      d="M8 15c4.418 0 8-3.134 8-7s-3.582-7-8-7-8 3.134-8 7c0 1.76.743 3.37 1.97 4.6-.097 1.016-.417 2.13-.771 2.966-.079.186.074.394.273.362 2.256-.37 3.597-.938 4.18-1.234A9.06 9.06 0 0 0 8 15z"
+                    />
+                  </svg>
                 </div>
               </div>
             </div>

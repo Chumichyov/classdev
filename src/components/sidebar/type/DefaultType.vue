@@ -1,5 +1,4 @@
 <script>
-import InputComponent from "../../InputComponent.vue";
 import { mapGetters, mapMutations } from "vuex";
 
 export default {
@@ -61,9 +60,7 @@ export default {
     },
   },
 
-  components: {
-    InputComponent,
-  },
+  components: {},
 };
 </script>
 
@@ -81,14 +78,33 @@ export default {
           Создать
         </button>
       </div>
-      <form action="" class="mt-3">
-        <input-component
-          v-on:input="newCourses"
+      <div class="mt-3 d-flex align-items-center">
+        <input
+          class="form-control bg-transparent border-gray-2 text-light px-2 py-1 flex-fill"
           type="text"
           name="search"
           v-model="search"
+          placeholder="Поиск..."
         />
-      </form>
+        <button
+          @click.prevent="newCourses()"
+          style="height: 34px"
+          class="ms-2 text-light d-flex align-items-center justify-content-center px-2 py-1 btn btn-primary"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="16"
+            height="16"
+            fill="currentColor"
+            class="bi bi-search"
+            viewBox="0 0 16 16"
+          >
+            <path
+              d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"
+            />
+          </svg>
+        </button>
+      </div>
     </div>
     <div class="" v-for="(course, index) in courses" :key="course.id">
       <div

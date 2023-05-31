@@ -1,6 +1,5 @@
 <script>
 import { mapGetters, mapMutations } from "vuex";
-import InputComponent from "@/components/InputComponent.vue";
 import Popper from "vue3-popper";
 
 export default {
@@ -194,6 +193,8 @@ export default {
             search: "",
           });
 
+          this.$store.dispatch("getMembers", this.$route.params.course);
+
           this.$store
             .dispatch("getTask", {
               course: this.$route.params.course,
@@ -213,7 +214,6 @@ export default {
   },
 
   components: {
-    InputComponent,
     Popper,
   },
 };
@@ -251,14 +251,6 @@ export default {
             aria-labelledby="addTask"
           >
             <li>
-              <!-- <button
-                class="dropdown-item"
-                type="button"
-                data-bs-toggle="modal"
-                data-bs-target="#newTask"
-              >
-                Новое задание
-              </button> -->
               <button
                 class="dropdown-item"
                 type="button"
@@ -268,14 +260,6 @@ export default {
               </button>
             </li>
             <li>
-              <!-- <button
-                class="dropdown-item"
-                type="button"
-                data-bs-toggle="modal"
-                data-bs-target="#newMaterial"
-              >
-                Новый материал
-              </button> -->
               <button
                 class="dropdown-item"
                 type="button"
@@ -286,45 +270,38 @@ export default {
             </li>
           </ul>
         </div>
-        <!-- <button
-              v-if="isTeacher"
-              class="btn btn-primary px-2 py-1 d-flex align-items-center"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="16"
-                height="16"
-                fill="currentColor"
-                class="bi bi-plus-lg"
-                viewBox="0 0 16 16"
-              >
-                <path
-                  fill-rule="evenodd"
-                  d="M8 2a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5A.5.5 0 0 1 8 2Z"
-                />
-              </svg>
-              <span class="ms-1"> Создать </span>
-            </button> -->
-
-        <!-- <button
-              class="bg-transparent border-0 me-3"
-              :class="isTeacher ? 'ms-3' : ''"
-            >
-              <img src="@/assets/funnel.png" alt="" />
-            </button> -->
-
-        <form
+        <div
           action=""
           style="max-width: 320px"
-          class="w-100"
+          class="w-100 d-flex align-items-center"
           :class="isTeacher ? 'ms-3' : ''"
         >
-          <input-component
-            v-on:input="newTasks"
-            :modelValue="'Поиск...'"
+          <input
+            class="form-control bg-transparent border-gray-2 text-light px-2 py-1"
+            type="text"
+            name="search"
             v-model="search"
-          ></input-component>
-        </form>
+            placeholder="Поиск..."
+          />
+          <button
+            @click.prevent="newTasks()"
+            style="height: 34px"
+            class="ms-2 text-light d-flex align-items-center justify-content-center px-2 py-1 btn btn-primary"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="16"
+              fill="currentColor"
+              class="bi bi-search"
+              viewBox="0 0 16 16"
+            >
+              <path
+                d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"
+              />
+            </svg>
+          </button>
+        </div>
       </div>
       <div class="mw-900 mt-4">
         <div class="" v-if="dates">

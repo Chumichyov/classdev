@@ -50,19 +50,32 @@ export default {
         });
     },
 
-    toDecision(decision) {
+    toDecision(course, task, decision) {
+      this.$store.dispatch("getCourse", course);
+
+      this.$store.dispatch("getTasks", {
+        course: course,
+        type: "Date",
+        search: "",
+      });
+
+      this.$store.dispatch("getTask", {
+        course: course,
+        task: task,
+      });
+
       this.$store
         .dispatch("showDecision", {
-          course: this.$route.params.course,
-          task: this.$route.params.task,
+          course: course,
+          task: task,
           decision: decision,
         })
         .then(() => {
           this.$router.push({
             name: "decision",
             params: {
-              course: this.$route.params.course,
-              task: this.$route.params.task,
+              course: course,
+              task: task,
               decision: decision,
             },
           });
@@ -200,17 +213,17 @@ export default {
             В курсе '{{ notification.course.title }}' выложено новое задание:
             <span class="text-primary">{{ notification.task.title }} </span>
           </div>
-          <div
+          <!-- <div
             class="bg-primary px-3 py-2 rounded d-flex align-items-center"
             v-if="notification.task.folders != ''"
-          >
-            <!-- data-bs-toggle="collapse"
+          > -->
+          <!-- data-bs-toggle="collapse"
               href="#collapseExample"
               role="button"
               aria-expanded="false"
               aria-controls="collapseExample" -->
-            <div class="flex-fill">Прикреплены файлы</div>
-            <!-- <svg
+          <!-- <div class="flex-fill">Прикреплены файлы</div> -->
+          <!-- <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="16"
                 height="16"
@@ -222,7 +235,7 @@ export default {
                   d="M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z"
                 />
               </svg> -->
-          </div>
+          <!-- </div> -->
           <!-- <div class="collapse mt-2" id="collapseExample">
               <div class="card card-body background-dark-1 border-0">
                 Some placeholder content for the collapse component. This panel
@@ -294,21 +307,19 @@ export default {
               >
                 Задание
               </li>
-              <!-- <li
+              <li
                 class="breadcrumb-item points-1 text-decoration-none cursor-pointer text-light"
                 data-bs-dismiss="modal"
                 @click.prevent="
                   toDecision(
                     notification.course.id,
                     notification.task.id,
-                    notification.task.folders != ''
-                      ? notification.task.folders[0].id
-                      : null
+                    notification.decision.id
                   )
                 "
               >
                 Решение
-              </li> -->
+              </li>
             </ol>
           </nav>
           <div class="mb-2 fs-18">

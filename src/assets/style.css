@@ -26,6 +26,11 @@
   overflow: hidden;
 }
 
+.form-control:focus {
+  border-color: none;
+  box-shadow: none;
+}
+
 html {
   overflow-y: scroll;
   overflow-x: hidden;
@@ -59,9 +64,24 @@ textarea:focus {
   background-color: #171a1c !important;
 }
 
+.white-space-pre-wrap {
+  white-space: pre-wrap;
+}
 
 .breadcrumb > a.active {
   color: #6c757d !important;
+}
+
+.mw-1200 {
+  display: flex;
+  flex-direction: column;
+  justify-content: start;
+  align-items: center;
+}
+
+.mw-1200 > div {
+  max-width: 1200px;
+  width: 100%;
 }
 
 .mw-900 {
@@ -77,8 +97,8 @@ textarea:focus {
 }
 
 .pagination.active {
-  background-color: #fff;
-  color: #171a1c;
+  background-color: #0d6efd;
+  color: rgb(248,249,250) !important;
 }
 
 .rounded-30 {
@@ -145,6 +165,10 @@ textarea:focus {
 
 .background-gray-2 {
   background-color: #383b40;
+}
+
+::-webkit-scrollbar-corner {
+  background: rgba(0,0,0,0);
 }
 
 .border-gray-1 {
@@ -258,6 +282,36 @@ a:hover {
   }
 }
 
+@media (min-width: 768px) {
+  .border-md-bottom {
+    border-bottom-width: 1px;
+    border-style: solid;
+  }
+
+  .w-md-100 {
+    width: 100% !important;
+ }
+
+  .border-md-start {
+    border-left-width: 1px;
+    border-style: solid;
+  } 
+  
+  .border-md-end {
+    border-right-width: 1px;
+    border-style: solid;
+  }
+
+  .border-md-top {
+    border-top-width: 1px;
+    border-style: solid;
+  }
+
+  .rounded-md {
+    border-radius: 0.375rem;
+  }
+}
+
 @media (max-width: 992px) {
   .main-px {
     padding-left: 24px;
@@ -288,6 +342,7 @@ a:hover {
   }
 }
 
+
 @media (max-width: 768px) {
   .welcome {
     margin-top: calc(75px + 25 * ((100vw - 320px) / (768 - 320)));
@@ -298,6 +353,13 @@ a:hover {
   }
   .fs-24 {
     font-size: calc(17px + 7 * ((100vw - 320px) / (768 - 320)));
+  }
+}
+
+@media (max-width: 767px) {
+  .main-px.main-px-767 {
+    padding-left: 0px;
+    padding-right: 0px;
   }
 }
 
