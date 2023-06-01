@@ -2,7 +2,6 @@
 import { useVuelidate } from "@vuelidate/core";
 import { mapGetters } from "vuex";
 import { helpers, required, minLength, maxLength } from "@vuelidate/validators";
-import InputComponent from "@/components/InputComponent.vue";
 
 export default {
   name: "NewFolderModalComponent",
@@ -20,9 +19,7 @@ export default {
     },
   },
 
-  components: {
-    InputComponent,
-  },
+  components: {},
 
   computed: {
     ...mapGetters([
@@ -50,6 +47,7 @@ export default {
           })
           .then(() => {
             this.title = "";
+            this.v$.$reset();
             this.$refs.folderCreate.reset();
           });
       }
@@ -68,6 +66,7 @@ export default {
           })
           .then(() => {
             this.title = "";
+            this.v$.$reset();
             this.$refs.folderCreate.reset();
           });
       }
@@ -123,28 +122,25 @@ export default {
         >
           <div class="modal-body py-0 border-0 text-light fw-normal">
             <div class="">
-              <input-component
-                class="w-100"
-                :label="'Название папки'"
-                v-model="title"
+              <input
                 type="text"
-                name="name"
-                :error="v$.title.$errors"
-              ></input-component>
+                class="form-control border-gray-2 rounded bg-transparent w-100 text-light"
+                placeholder="Название папки"
+                v-model="title"
+              />
+              <div
+                class="text-danger"
+                v-if="v$.title.$errors && v$.title.$errors[0]"
+              >
+                {{ v$.title.$errors[0].$message }}
+              </div>
             </div>
           </div>
           <div
-            class="modal-footer border-0 d-flex align-items-center justify-content-between"
+            class="modal-footer border-0 d-flex align-items-center justify-content-end"
           >
             <button
-              type="button"
-              class="btn btn-secondary"
-              data-bs-dismiss="modal"
-            >
-              Закрыть
-            </button>
-            <button
-              v-if="v$.$errors == '' && title != ''"
+              v-if="v$.title.$errors == '' && title != ''"
               type="submit"
               class="btn btn-primary"
               data-bs-dismiss="modal"
@@ -153,6 +149,13 @@ export default {
             </button>
             <button v-else type="submit" class="btn btn-primary">
               Создать
+            </button>
+            <button
+              type="button"
+              class="btn btn-secondary ms-2"
+              data-bs-dismiss="modal"
+            >
+              Закрыть
             </button>
           </div>
         </form>

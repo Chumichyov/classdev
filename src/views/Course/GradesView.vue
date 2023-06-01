@@ -123,6 +123,7 @@ export default {
                 :key="task.id"
                 style="
                   word-wrap: break-word;
+                  word-break: break-all;
                   max-height: 220px;
                   min-width: 90px;
                 "
@@ -159,6 +160,9 @@ export default {
               >
                 {{ grade.grade == null ? "-" : grade.grade }}
               </td>
+            </tr>
+            <tr class="border-0" v-if="loadedCourse.members.length == 1">
+              <td class="border-0"></td>
             </tr>
           </tbody>
         </table>

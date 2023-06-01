@@ -48,11 +48,18 @@ export default {
             class="d-flex align-items-center w-100 cursor-pointer my-hover"
             style="height: 40px"
           >
-            <div class="my-2 ms-3" style="width: 24px; height: 24px">
+            <div
+              class="my-2 ms-3 overflow-hidden rounded-circle d-flex align-items-center justify-content-center"
+              style="width: 24px; height: 24px"
+            >
               <img
-                style="width: 24px; height: 24px"
-                class="rounded-circle position-relative w-100"
-                :src="this.$url + leaderPhotoPath"
+                class="position-relative w-100 h-auto"
+                :src="
+                  this.$url +
+                  (loadedCourse.leader && loadedCourse.leader.information
+                    ? loadedCourse.leader.information.photo_path
+                    : '')
+                "
                 alt=""
               />
             </div>
@@ -96,22 +103,33 @@ export default {
                 v-if="member.id != loadedCourse.leader.id"
                 style="height: 40px"
               >
-                <div class="ms-3 my-2" style="width: 24px; height: 24px">
+                <div
+                  class="ms-3 my-2 rounded-circle overflow-hidden d-flex align-items-center justify-content-center"
+                  style="width: 24px; height: 24px"
+                >
                   <img
-                    style="width: 24px; height: 24px"
-                    class="rounded-circle position-relative w-100"
-                    :src="this.$url + member.information.photo_path"
+                    class="position-relative w-100 h-auto"
+                    :src="
+                      this.$url +
+                      (member.information ? member.information.photo_path : '')
+                    "
                     alt=""
                   />
                 </div>
-                <div class="ms-2 flex-fill py-2" v-if="member.messenger[0]">
+                <div class="ms-2 flex-fill py-2">
                   {{ member.name }}
                   {{ member.surname }}
                 </div>
                 <div
-                  v-if="member.messenger[0] && isTeacher"
+                  v-if="member.messenger && member.messenger[0] && isTeacher"
                   class="cursor-pointer d-flex align-items-center justify-content-center px-3 h-100 text-primary primary-hover"
-                  @click.prevent="toChat(member.messenger[0].id)"
+                  @click.prevent="
+                    toChat(
+                      member.messenger && member.messenger[0]
+                        ? member.messenger[0].id
+                        : ''
+                    )
+                  "
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"

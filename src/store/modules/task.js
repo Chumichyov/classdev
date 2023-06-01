@@ -243,6 +243,13 @@ export default (api, router, LoadingStatuses) => {
                 element.description = data.description;
               }
             });
+
+            ctx.getters.onlyTasks.forEach((element) => {
+              if (element.id == data.task) {
+                element.title = data.title;
+                element.description = data.description;
+              }
+            });
           })
           .catch((err) => {
             if (ctx.getters.error.status != err.response.status) {
@@ -373,6 +380,19 @@ export default (api, router, LoadingStatuses) => {
     mutations: {
       setTasks(state, tasks) {
         state.tasks = tasks;
+      },
+
+      setCompletedLoadedTask(state, completed) {
+        state.loadedTask.is_completed = completed;
+      },
+
+      setCompletedLoadedTasks(state, completed) {
+        for (let index = 0; index < state.tasks.length; index++) {
+          if (state.tasks[index].id == completed.id) {
+            state.tasks[index].is_completed = completed.completed;
+            break;
+          }
+        }
       },
 
       setOnlyTasks(state, onlyTasks) {

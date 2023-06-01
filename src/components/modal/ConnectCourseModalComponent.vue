@@ -29,6 +29,7 @@ export default {
           code: this.code,
         })
         .then(() => {
+          this.v$.$reset();
           if (this.loadedCourse) this.toCourse(this.loadedCourse.id);
         });
     },

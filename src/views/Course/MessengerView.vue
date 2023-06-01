@@ -107,7 +107,7 @@ export default {
               <img
                 :src="this.$url + messenger.student.information.photo_path"
                 alt=""
-                class="w-100 h-100"
+                class="w-100 h-auto"
               />
             </div>
             <div class="ms-3 d-flex flex-column justify-content-between">
@@ -195,7 +195,7 @@ export default {
               <img
                 :src="this.$url + messenger.teacher.information.photo_path"
                 alt=""
-                class="w-100 h-100"
+                class="w-100 h-auto"
               />
             </div>
             <div class="ms-3 d-flex flex-column justify-content-between">

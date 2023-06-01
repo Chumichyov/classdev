@@ -28,6 +28,7 @@ export default {
       "loadStatusUpdateReview",
       "loadStatusUpdateDecision",
       "loadStatusLoadedMessengers",
+      "loadStatusUpdateUser",
       "loadStatusLoadedMessenger",
     ]),
   },
@@ -60,6 +61,7 @@ export default {
       loadStatusUpdateReview == 'LOADING' ||
       loadStatusLoadedMessengers == 'LOADING' ||
       loadStatusLoadedMessenger == 'LOADING' ||
+      loadStatusUpdateUser == 'LOADING' ||
       loadStatusLoadedDecisionFiles == 'LOADING'
     "
   >

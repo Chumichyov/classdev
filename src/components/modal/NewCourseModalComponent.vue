@@ -35,6 +35,7 @@ export default {
           this.course.group = "";
           this.course.description = "";
 
+          this.v$.$reset();
           this.$refs.storeCourse.reset();
         });
       }

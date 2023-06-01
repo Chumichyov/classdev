@@ -465,7 +465,7 @@ export default {
         </div>
       </div>
       <div>
-        <div class="px-2 mt-4 text-white">
+        <div class="px-2 mt-4 text-white text-break">
           {{ decision.description }}
         </div>
         <div

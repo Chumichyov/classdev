@@ -158,6 +158,13 @@ const routes = [
     meta: { requiresAuth: true },
     component: () => import("@/views/ConnectionView.vue"),
   },
+
+  {
+    path: "/profile",
+    name: "profile",
+    meta: { layout: "default", requiresAuth: true },
+    component: () => import("@/views/ProfileView.vue"),
+  },
 ];
 
 const router = createRouter({

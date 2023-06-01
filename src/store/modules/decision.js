@@ -148,15 +148,19 @@ export default (api, router, LoadingStatuses) => {
             if (res.data.data.length == 0) {
               ctx.commit("setLoadStatusUpdateDecision", LoadingStatuses.Empty);
             } else {
-              ctx.commit("setLoadStatusUpdateDecision", LoadingStatuses.Ready);
-            }
+              ctx.dispatch("getMembers", data.course).then(() => {
+                ctx.commit("setDecision", res.data.data);
 
-            ctx.dispatch("getMembers", data.course);
-            ctx.commit("setDecision", res.data.data);
+                for (var i = 0; i < ctx.getters.decisions.length; i++) {
+                  if (ctx.getters.decisions[i].id == res.data.data.id)
+                    ctx.getters.decisions[i] = res.data.data;
+                }
 
-            for (var i = 0; i < ctx.getters.decisions.length; i++) {
-              if (ctx.getters.decisions[i].id == res.data.data.id)
-                ctx.getters.decisions[i] = res.data.data;
+                ctx.commit(
+                  "setLoadStatusUpdateDecision",
+                  LoadingStatuses.Ready
+                );
+              });
             }
           })
           .catch((err) => {

@@ -48,10 +48,15 @@ export default createStore({
     loadStatusLoadedReviews: null,
     loadStatusLoadedMessengers: null,
     loadStatusLoadedMessenger: null,
+    loadStatusUpdateUser: null,
   },
   getters: {
     loadStatusCourses: (state) => {
       return state.loadStatusCourses;
+    },
+
+    loadStatusUpdateUser: (state) => {
+      return state.loadStatusUpdateUser;
     },
 
     loadStatusStoreReview: (state) => {
@@ -262,6 +267,10 @@ export default createStore({
 
     setLoadStatusLoadedMessenger(state, loadStatusLoadedMessenger) {
       state.loadStatusLoadedMessenger = loadStatusLoadedMessenger;
+    },
+
+    setLoadStatusUpdateUser(state, loadStatusUpdateUser) {
+      state.loadStatusUpdateUser = loadStatusUpdateUser;
     },
 
     setError(state, error) {

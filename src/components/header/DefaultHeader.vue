@@ -38,6 +38,12 @@ export default {
       this.$store.dispatch("logout");
     },
 
+    toProfile() {
+      this.$router.push({
+        name: "profile",
+      });
+    },
+
     toNotifications() {
       this.$store
         .dispatch("notifications", {
@@ -142,15 +148,14 @@ export default {
       </div>
       <div class="btn-group">
         <div
-          class="d-flex align-items-center justify-content-start"
+          class="d-flex align-items-center justify-content-start rounded-circle overflow-hidden"
           style="width: 24px; height: 24px"
         >
           <img
             v-if="loadStatusAuthUser === 'READY'"
-            class="rounded-circle position-relative w-100"
+            class="position-relative w-100 h-auto"
             alt=""
             :src="this.$url + authUser.information.photo_path"
-            style="width: 24px; height: 24px"
             data-bs-toggle="dropdown"
             data-bs-display="static"
             aria-expanded="false"
@@ -163,7 +168,10 @@ export default {
               {{ authUser.name + " " + authUser.surname }}
             </li>
 
-            <li class="mt-2 px-3 py-1 my-hover cursor-pointer">
+            <li
+              class="mt-2 px-3 py-1 my-hover cursor-pointer"
+              @click.prevent="toProfile()"
+            >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="18"

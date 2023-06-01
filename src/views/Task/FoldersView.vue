@@ -1,5 +1,5 @@
 <script>
-import { mapGetters } from "vuex";
+import { mapGetters, mapMutations } from "vuex";
 import NewFolderModalComponent from "@/components/modal/NewFolderModalComponent.vue";
 import NewFileModalComponent from "@/components/modal/NewFileModalComponent.vue";
 import Popper from "vue3-popper";
@@ -41,6 +41,8 @@ export default {
   },
 
   methods: {
+    ...mapMutations(["setCompletedLoadedTask", "setCompletedLoadedTasks"]),
+
     resize() {
       let element = this.$refs["textarea"];
       const height = element.style.height;
@@ -183,15 +185,25 @@ export default {
       }
     },
 
-    updateDecision(completed = null) {
-      this.$store.dispatch("updateDecision", {
-        course: this.$route.params.course,
-        task: this.$route.params.task,
-        decision: this.decision.id,
-        description: this.description,
-        completed: completed,
-        grade: null,
-      });
+    updateDecision(completed = null, id = null) {
+      this.$store
+        .dispatch("updateDecision", {
+          course: this.$route.params.course,
+          task: this.$route.params.task,
+          decision: this.decision.id,
+          description: this.description,
+          completed: completed,
+          grade: null,
+        })
+        .then(() => {
+          if (id) {
+            this.setCompletedLoadedTask(completed);
+            this.setCompletedLoadedTasks({
+              id,
+              completed,
+            });
+          }
+        });
     },
 
     toDecision(decision) {
@@ -225,12 +237,21 @@ export default {
 <template>
   <new-file-modal-component
     :type="'Decision'"
-    v-if="!isTeacher && loadedTask.type.id == 1"
+    v-if="
+      !isTeacher &&
+      loadedTask.type.id == 1 &&
+      (loadedTask.is_completed == 1 || loadedTask.is_completed == 4)
+    "
   ></new-file-modal-component>
   <new-folder-modal-component
     :type="'Decision'"
-    v-if="!isTeacher && loadedTask.type.id == 1"
+    v-if="
+      !isTeacher &&
+      loadedTask.type.id == 1 &&
+      (loadedTask.is_completed == 1 || loadedTask.is_completed == 4)
+    "
   ></new-folder-modal-component>
+
   <div class="main-px mw-900 my-4">
     <div
       class="border border-gray-2 rounded d-flex flex-column align-items-start overflow-hidden"
@@ -402,21 +423,29 @@ export default {
       "
       class="rounded overflow-hidden"
     >
-      <div class="px-2">
+      <div class="px-2 text-break">
         {{ loadedTask.description }}
       </div>
     </div>
 
     <div
       :class="typeFolders != 'Decision' ? 'mt-4' : ''"
-      v-if="!isTeacher && typeFolders != 'Task' && loadedTask.type.id == 1"
+      v-if="
+        !isTeacher &&
+        typeFolders != 'Task' &&
+        loadedTask.type &&
+        loadedTask.type.id == 1
+      "
       class="border border-gray-2 rounded overflow-hidden"
     >
       <div class="background-dark-2 d-flex justify-content-between">
         <div class="ps-3 fs-5 py-2 flex-fill text-primary">Решение</div>
         <div
           class="d-flex align-items-center text-primary"
-          v-if="decision.completed.id == 1"
+          v-if="
+            decision.completed &&
+            (decision.completed.id == 1 || decision.completed.id == 4)
+          "
         >
           <div
             style="height: 46px"
@@ -576,7 +605,10 @@ export default {
             {{ folder.reviews }}
           </div>
           <div
-            v-if="!isTeacher && decision.completed.id == 1"
+            v-if="
+              !isTeacher &&
+              (decision.completed.id == 1 || decision.completed.id == 4)
+            "
             class="text-danger py-2 px-3 danger-hover"
             @click.prevent="destroyDecisionFolder(folder.id)"
           >
@@ -630,7 +662,17 @@ export default {
             </div>
           </div>
           <div
-            v-if="!isTeacher && decision.completed.id == 1"
+            class="px-3 text-primary fw-bold text-center"
+            style="width: 50px"
+            v-if="file.reviews != 0"
+          >
+            {{ file.reviews }}
+          </div>
+          <div
+            v-if="
+              !isTeacher &&
+              (decision.completed.id == 1 || decision.completed.id == 4)
+            "
             class="text-danger py-2 px-3 danger-hover"
             @click.prevent="destroyDecisionFile(file.id)"
           >
@@ -647,13 +689,6 @@ export default {
               />
             </svg>
           </div>
-          <div
-            class="px-3 text-primary fw-bold text-center"
-            style="width: 50px"
-            v-if="file.reviews != 0"
-          >
-            {{ file.reviews }}
-          </div>
         </div>
       </div>
     </div>
@@ -664,8 +699,10 @@ export default {
         !isTeacher &&
         typeFolders != 'Task' &&
         typeFolders != 'Decision' &&
+        loadedTask.type &&
         loadedTask.type.id == 1 &&
-        decision.completed.id == 1
+        decision.completed &&
+        (decision.completed.id == 1 || decision.completed.id == 4)
       "
     >
       <textarea
@@ -680,9 +717,14 @@ export default {
         placeholder="Описание..."
       ></textarea>
       <div
-        v-if="decision.completed.id == 1"
+        v-if="
+          decision.completed &&
+          (decision.completed.id == 1 || decision.completed.id == 4)
+        "
         class="d-flex align-items-center justify-content-center px-3 py-2 cursor-pointer text-primary"
-        @click.prevent="updateDecision()"
+        @click.prevent="
+          updateDecision(decision.completed ? decision.completed.id : '')
+        "
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -705,31 +747,39 @@ export default {
         !isTeacher &&
         typeFolders != 'Task' &&
         typeFolders != 'Decision' &&
+        loadedTask.type &&
         loadedTask.type.id == 1
       "
     >
-      <div class="px-2 mt-4" v-if="decision.completed.id != 1">
+      <div
+        class="px-2 mt-4 text-break"
+        v-if="
+          decision.completed &&
+          decision.completed.id != 1 &&
+          decision.completed.id != 4
+        "
+      >
         {{ decision.description }}
       </div>
       <div
         :class="decision.description != '' ? 'mt-4' : ''"
         class="mt-4 border border-primary rounded px-3 py-2"
       >
-        <div class="d-flex align-items-center py-1">
+        <div class="d-flex align-items-center py-1" v-if="decision.completed">
           <div class="w-100" style="max-width: 130px">Статус:</div>
           <div
             class="ms-3"
             :class="
-              decision.completed && decision.completed.id == 3
+              decision && decision.completed && decision.completed.id == 3
                 ? 'text-success'
-                : decision.completed && decision.completed.id == 4
+                : decision && decision.completed && decision.completed.id == 4
                 ? 'text-warning'
-                : decision.completed && decision.completed.id == 5
+                : decision && decision.completed && decision.completed.id == 5
                 ? 'text-danger'
                 : 'text-primary'
             "
           >
-            {{ decision.completed.title }}
+            {{ decision.completed ? decision.completed.title : "" }}
           </div>
         </div>
         <div class="d-flex align-items-center py-1">
@@ -745,8 +795,14 @@ export default {
           </div>
         </div>
       </div>
-      <div class="text-end mt-3 w-100" v-if="decision.completed.id == 2">
-        <button class="btn btn-danger" @click.prevent="updateDecision(1)">
+      <div
+        class="text-end mt-3 w-100"
+        v-if="decision.completed && decision.completed.id == 2"
+      >
+        <button
+          class="btn btn-danger"
+          @click.prevent="updateDecision(1, loadedTask.id)"
+        >
           Отменить отправку
         </button>
       </div>
@@ -758,13 +814,17 @@ export default {
         !isTeacher &&
         typeFolders != 'Task' &&
         typeFolders != 'Decision' &&
+        loadedTask.type &&
         loadedTask.type.id == 1
       "
     >
       <button
         class="btn btn-primary"
-        v-if="decision.completed.id == 1 || decision.completed.id == 4"
-        @click.prevent="updateDecision(2)"
+        v-if="
+          decision.completed &&
+          (decision.completed.id == 1 || decision.completed.id == 4)
+        "
+        @click.prevent="updateDecision(2, loadedTask.id)"
       >
         Сдать решение
       </button>

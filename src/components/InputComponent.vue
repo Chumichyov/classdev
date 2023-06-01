@@ -47,7 +47,7 @@ export default {
       ></label
     >
     <input
-      class="form-control border-gray-1 bg-transparent text-light"
+      class="form-control border-gray-2 bg-transparent text-light"
       style="height: 32px"
       :type="type"
       :name="name"

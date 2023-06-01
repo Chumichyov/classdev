@@ -142,16 +142,19 @@ export default {
 
     toTask(task, folder = null) {
       if (!this.loadedTask || this.loadedTask.id != task) {
-        this.$store.dispatch("getTask", {
-          course: this.$route.params.course,
-          task: task,
-        });
+        this.$store
+          .dispatch("getTask", {
+            course: this.$route.params.course,
+            task: task,
+          })
+          .then(() => {
+            if (this.loadedTask.type && this.loadedTask.type.id == 1)
+              this.$store.dispatch("getAuthDecision", {
+                course: this.$route.params.course,
+                task: task,
+              });
+          });
       }
-
-      this.$store.dispatch("getAuthDecision", {
-        course: this.$route.params.course,
-        task: task,
-      });
 
       this.$store
         .dispatch("getMainFiles", {
@@ -176,28 +179,13 @@ export default {
             folder: folder,
           })
           .then(() => {
-            if (this.loadStatusLoadedFiles == "READY") {
-              // this.$router.push({
-              //   name: "folder",
-              //   params: {
-              //     course: this.loadedCourse.id,
-              //     task: task,
-              //     folder: folder,
-              //   },
-              // });
-              if (
-                this.loadStatusLoadedTask == "READY" &&
-                this.loadStatusLoadedDecision == "READY"
-              ) {
-                this.$router.push({
-                  name: "task",
-                  params: {
-                    course: this.loadedCourse.id,
-                    task: task,
-                  },
-                });
-              }
-            }
+            this.$router.push({
+              name: "task",
+              params: {
+                course: this.loadedCourse.id,
+                task: task,
+              },
+            });
           });
       }
     },
@@ -300,7 +288,7 @@ export default {
                         ? 'active'
                         : 'text-gray-1'
                     "
-                    class="text text-decoration-none px-2 py-2"
+                    class="text text-decoration-none px-2 py-2 cursor-pointer"
                   >
                     Оценки
                   </div>
@@ -313,7 +301,7 @@ export default {
                         ? 'active'
                         : 'text-gray-1'
                     "
-                    class="text text-decoration-none px-2 py-2"
+                    class="text text-decoration-none px-2 py-2 cursor-pointer"
                   >
                     Настройки
                   </div>
@@ -321,8 +309,8 @@ export default {
               </ul>
             </div>
           </div>
-          <div class="d-none d-md-flex align-items-center">
-            <div class="me-2 pe-2 py-1 text cursor-pointer" v-if="isTeacher">
+          <div class="d-none d-md-flex align-items-center" v-if="isTeacher">
+            <div class="me-2 pe-2 py-1 text cursor-pointer">
               <div
                 @click.prevent="toGrades()"
                 :class="
@@ -333,7 +321,7 @@ export default {
                 Оценки
               </div>
             </div>
-            <div class="me-2 pe-2 py-1 text cursor-pointer" v-if="isTeacher">
+            <div class="me-2 pe-2 py-1 text cursor-pointer">
               <div
                 @click.prevent="toSettings()"
                 :class="

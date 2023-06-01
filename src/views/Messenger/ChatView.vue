@@ -149,12 +149,12 @@ export default {
             style="max-width: 75px"
           >
             <div
-              class="overflow-hidden rounded-circle"
+              class="overflow-hidden rounded-circle d-flex align-items-center justify-content-center"
               style="width: 32px; height: 32px"
             >
               <img
                 v-if="messenger.student && messenger.teacher"
-                class="w-100 h-100"
+                class="w-100 h-auto"
                 :src="
                   this.$url +
                   (messenger.student.id == authUser.id
@@ -208,7 +208,7 @@ export default {
               </div>
               <div class="d-flex align-items-start">
                 <div
-                  class="overflow-hidden rounded-circle flex-shrink-0 me-2"
+                  class="overflow-hidden rounded-circle flex-shrink-0 me-2 d-flex align-items-center justify-content-center"
                   style="width: 28px; height: 28px"
                 >
                   <img
@@ -223,7 +223,7 @@ export default {
                             messenger.messages[index - 1].created_at
                           ))
                     "
-                    class="w-100 h-100"
+                    class="w-100 h-auto"
                     :src="
                       this.$url +
                       (messenger.student.id == message.sender

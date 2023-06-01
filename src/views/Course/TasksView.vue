@@ -108,7 +108,7 @@ export default {
         });
     },
 
-    toTask(task, folder = null) {
+    toTask(task, type, folder = null) {
       if (!this.loadedTask || this.loadedTask.id != task) {
         this.$store.dispatch("getTask", {
           course: this.$route.params.course,
@@ -116,10 +116,12 @@ export default {
         });
       }
 
-      this.$store.dispatch("getAuthDecision", {
-        course: this.$route.params.course,
-        task: task,
-      });
+      if (type == 1) {
+        this.$store.dispatch("getAuthDecision", {
+          course: this.$route.params.course,
+          task: task,
+        });
+      }
 
       this.$store
         .dispatch("getMainFiles", {
@@ -144,28 +146,13 @@ export default {
             folder: folder,
           })
           .then(() => {
-            if (this.loadStatusLoadedFiles == "READY") {
-              // this.$router.push({
-              //   name: "folder",
-              //   params: {
-              //     course: this.loadedCourse.id,
-              //     task: task,
-              //     folder: folder,
-              //   },
-              // });
-              if (
-                this.loadStatusLoadedTask == "READY" &&
-                this.loadStatusLoadedDecision == "READY"
-              ) {
-                this.$router.push({
-                  name: "task",
-                  params: {
-                    course: this.loadedCourse.id,
-                    task: task,
-                  },
-                });
-              }
-            }
+            this.$router.push({
+              name: "task",
+              params: {
+                course: this.loadedCourse.id,
+                task: task,
+              },
+            });
           });
       }
     },
@@ -325,6 +312,7 @@ export default {
                     @click.prevent="
                       toTask(
                         task.id,
+                        task.type ? task.type.id : '',
                         task.folders != '' ? task.folders[0].id : null
                       )
                     "
@@ -403,6 +391,22 @@ export default {
                     </Popper>
                   </div>
                   <div
+                    class="d-flex align-items-center px-3"
+                    v-if="task.is_completed == 4"
+                  >
+                    <Popper>
+                      <div
+                        class="rounded-circle bg-warning cursor-pointer"
+                        style="width: 16px; height: 16px"
+                      ></div>
+                      <template #content>
+                        <div class="bg-primary p-2 rounded text-light">
+                          Возвращено для переработки
+                        </div>
+                      </template>
+                    </Popper>
+                  </div>
+                  <div
                     @click.prevent="toSettings(task.id)"
                     class="cursor-pointer d-flex align-items-center justify-content-center px-3"
                     :class="
@@ -428,37 +432,30 @@ export default {
                       />
                     </svg>
                   </div>
-                  <!-- </router-link> -->
                 </div>
               </div>
             </div>
-            <!-- <div
-                class=""
-                v-for="(task, index) in loadedCourse.tasks"
-                :key="task.id"
-              >
-                {{
-                  (index != 0 &&
-                    this.$moment.getDate(task.created_at) !==
-                      this.$moment.getDate(
-                        loadedCourse.tasks[index - 1].created_at
-                      )) ||
-                  index == 0
-                    ? this.$moment.getDate(task.created_at)
-                    : ""
-                }}
-              </div> -->
           </div>
         </div>
+
         <div
           :class="tasks != '' ? 'border border-gray-2 rounded' : ''"
           v-if="dates == null"
         >
           <div v-for="task in tasks" :key="task.id">
             <div
-              class="d-flex w-100 align-items-center justify-content-between my-hover justify-content-start text-light py-2 px-3"
+              class="d-flex w-100 align-items-center justify-content-between my-hover justify-content-start text-light"
             >
-              <div class="d-flex align-items-center">
+              <div
+                class="d-flex align-items-center flex-fill ps-3 py-2"
+                @click.prevent="
+                  toTask(
+                    task.id,
+                    task.type ? task.type.id : '',
+                    task.folders != '' ? task.folders[0].id : null
+                  )
+                "
+              >
                 <img
                   v-if="task.type.id == 1"
                   src="@/assets/file-earmark-fill.png"
@@ -467,19 +464,14 @@ export default {
                 />
                 <img v-else src="@/assets/info-lg.png" alt="" />
 
-                <div
-                  class="ms-2 points-1 cursor-pointer"
-                  @click.prevent="
-                    toTask(
-                      task.id,
-                      task.folders != '' ? task.folders[0].id : null
-                    )
-                  "
-                >
+                <div class="ms-2 points-1 cursor-pointer flex-fill">
                   {{ task.title }}
                 </div>
               </div>
-              <div class="" v-if="task.is_completed == false">
+              <div
+                class="d-flex align-items-center px-3 py-2"
+                v-if="task.is_completed == 1"
+              >
                 <Popper>
                   <div
                     class="rounded-circle bg-primary cursor-pointer"
@@ -492,7 +484,46 @@ export default {
                   </template>
                 </Popper>
               </div>
-              <!-- </router-link> -->
+              <div
+                class="d-flex align-items-center px-3 py-2"
+                v-if="task.is_completed == 4"
+              >
+                <Popper>
+                  <div
+                    class="rounded-circle bg-warning cursor-pointer"
+                    style="width: 16px; height: 16px"
+                  ></div>
+                  <template #content>
+                    <div class="bg-primary p-2 rounded text-light">
+                      Возвращено для переработки
+                    </div>
+                  </template>
+                </Popper>
+              </div>
+              <div
+                @click.prevent="toSettings(task.id)"
+                class="cursor-pointer d-flex align-items-center justify-content-center px-3"
+                :class="
+                  task.is_published == 1
+                    ? 'text-primary primary-hover'
+                    : 'text-primary-tr primary-tr-hover'
+                "
+                style="height: 40px"
+                v-if="authUser != '' && authUser.id == loadedCourse.leader.id"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16"
+                  height="16"
+                  fill="currentColor"
+                  class="bi bi-gear-fill"
+                  viewBox="0 0 16 16"
+                >
+                  <path
+                    d="M9.405 1.05c-.413-1.4-2.397-1.4-2.81 0l-.1.34a1.464 1.464 0 0 1-2.105.872l-.31-.17c-1.283-.698-2.686.705-1.987 1.987l.169.311c.446.82.023 1.841-.872 2.105l-.34.1c-1.4.413-1.4 2.397 0 2.81l.34.1a1.464 1.464 0 0 1 .872 2.105l-.17.31c-.698 1.283.705 2.686 1.987 1.987l.311-.169a1.464 1.464 0 0 1 2.105.872l.1.34c.413 1.4 2.397 1.4 2.81 0l.1-.34a1.464 1.464 0 0 1 2.105-.872l.31.17c1.283.698 2.686-.705 1.987-1.987l-.169-.311a1.464 1.464 0 0 1 .872-2.105l.34-.1c1.4-.413 1.4-2.397 0-2.81l-.34-.1a1.464 1.464 0 0 1-.872-2.105l.17-.31c.698-1.283-.705-2.686-1.987-1.987l-.311.169a1.464 1.464 0 0 1-2.105-.872l-.1-.34zM8 10.93a2.929 2.929 0 1 1 0-5.86 2.929 2.929 0 0 1 0 5.858z"
+                  />
+                </svg>
+              </div>
             </div>
           </div>
         </div>

@@ -148,8 +148,8 @@ export default {
       });
     },
 
-    resize(ref) {
-      let element = this.$refs[ref][0];
+    resize() {
+      let element = this.$refs["textareaModal"];
       const height = element.style.height;
       const scrollHeight = element.scrollHeight;
 
@@ -309,8 +309,8 @@ export default {
               type="text"
               name="name"
               ref="textareaModal"
-              @input="resize('textareaModal')"
-              @focus="resize('textareaModal')"
+              @input="resize()"
+              @focus="resize()"
               style="min-height: 66px"
               placeholder="Описание"
               v-model="workReview.description"
